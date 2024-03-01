@@ -16,7 +16,6 @@ class CplDenganIk extends Model
         'uuid',
         'uuid_cpl',
         'uuid_ik',
-        'bobot',
     ];
 
     protected static function boot()

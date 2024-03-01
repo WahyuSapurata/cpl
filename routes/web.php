@@ -53,12 +53,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/update-indikator-kinerja/{params}', 'IndikatorKinerjaController@update')->name('update-indikator-kinerja');
         Route::delete('/delete-indikator-kinerja/{params}', 'IndikatorKinerjaController@delete')->name('delete-indikator-kinerja');
 
-        Route::get('/cpldenganik', 'CplDenganIkController@index')->name('cpldenganik');
-        Route::get('/get-cpldenganik', 'CplDenganIkController@get')->name('get-cpldenganik');
-        Route::get('/show-cpldenganik/{params}', 'CplDenganIkController@show')->name('show-cpldenganik');
-        Route::post('/add-cpldenganik', 'CplDenganIkController@store')->name('add-cpldenganik');
-        Route::post('/update-cpldenganik/{params}', 'CplDenganIkController@update')->name('update-cpldenganik');
-        Route::delete('/delete-cpldenganik/{params}', 'CplDenganIkController@delete')->name('delete-cpldenganik');
+        // Route::get('/cpldenganik', 'CplDenganIkController@index')->name('cpldenganik');
+        // Route::get('/get-cpldenganik', 'CplDenganIkController@get')->name('get-cpldenganik');
+        // Route::get('/show-cpldenganik/{params}', 'CplDenganIkController@show')->name('show-cpldenganik');
+        // Route::post('/add-cpldenganik', 'CplDenganIkController@store')->name('add-cpldenganik');
+        // Route::post('/update-cpldenganik/{params}', 'CplDenganIkController@update')->name('update-cpldenganik');
+        // Route::delete('/delete-cpldenganik/{params}', 'CplDenganIkController@delete')->name('delete-cpldenganik');
 
         Route::get('/ikdengancpmk', 'IkDenganCpmkController@index')->name('ikdengancpmk');
         Route::get('/get-ikdengancpmk', 'IkDenganCpmkController@get')->name('get-ikdengancpmk');
@@ -66,10 +66,18 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/add-ikdengancpmk', 'IkDenganCpmkController@store')->name('add-ikdengancpmk');
         Route::post('/update-ikdengancpmk/{params}', 'IkDenganCpmkController@update')->name('update-ikdengancpmk');
         Route::delete('/delete-ikdengancpmk/{params}', 'IkDenganCpmkController@delete')->name('delete-ikdengancpmk');
+
+        Route::get('/nilaicpl', 'NilaiCpl@index')->name('nilaicpl');
     });
 
     Route::group(['prefix' => 'kajur', 'middleware' => ['auth'], 'as' => 'kajur.'], function () {
         Route::get('/dashboard-kajur', 'Dashboard@dashboard_kajur')->name('dashboard-kajur');
+
+        Route::get('/cpl', 'CplProdiController@index')->name('cpl');
+        Route::get('/indikator-kinerja', 'IndikatorKinerjaController@index')->name('indikator-kinerja');
+        Route::get('/ikdengancpmk', 'IkDenganCpmkController@index')->name('ikdengancpmk');
+        Route::get('/nilai', 'NilaiController@index')->name('nilai');
+        Route::get('/nilaicpl', 'NilaiCpl@index')->name('nilaicpl');
     });
 
     Route::group(['prefix' => 'dosen', 'middleware' => ['auth'], 'as' => 'dosen.'], function () {
@@ -78,11 +86,14 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/ikdengancpmk', 'IkDenganCpmkController@index')->name('ikdengancpmk');
 
         Route::get('/nilai', 'NilaiController@index')->name('nilai');
-        Route::get('/get-nilai', 'NilaiController@get')->name('get-nilai');
+        Route::get('/get-nilai/{params}', 'NilaiController@get')->name('get-nilai');
         Route::get('/show-nilai/{params}', 'NilaiController@show')->name('show-nilai');
         Route::post('/add-nilai', 'NilaiController@store')->name('add-nilai');
         Route::post('/update-nilai/{params}', 'NilaiController@update')->name('update-nilai');
         Route::delete('/delete-nilai/{params}', 'NilaiController@delete')->name('delete-nilai');
+
+        Route::get('/nilaicpl', 'NilaiCpl@index')->name('nilaicpl');
+        Route::get('/get-nilaicpl/{params}', 'NilaiCpl@get')->name('get-nilaicpl');
     });
 
     Route::get('/ubahpassword', 'UbahPassword@index')->name('ubahpassword');

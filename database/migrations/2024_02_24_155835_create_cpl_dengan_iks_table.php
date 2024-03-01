@@ -16,7 +16,6 @@ return new class extends Migration
             $table->uuid('uuid');
             $table->uuid('uuid_cpl');
             $table->json('uuid_ik');
-            $table->string('bobot');
             $table->timestamps();
         });
     }

@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->uuid('uuid_user');
-            $table->uuid('uuid_ik');
-            $table->uuid('uuid_mata_kuliah');
             $table->string('kode_cpmk');
             $table->string('deskripsi');
             $table->string('bobot');

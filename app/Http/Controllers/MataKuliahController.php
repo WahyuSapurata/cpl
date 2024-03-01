@@ -26,8 +26,14 @@ class MataKuliahController extends BaseController
             return $item;
         });
 
+        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur') {
+            $dataCombine = $combinedData;
+        } else {
+            $dataCombine = $combinedData->where('uuid_dosen', auth()->user()->uuid)->values();
+        }
+
         // Mengembalikan response berdasarkan data yang sudah disaring
-        return $this->sendResponse($combinedData, 'Get data success');
+        return $this->sendResponse($dataCombine, 'Get data success');
     }
 
     public function store(StoreMataKuliahRequest $storeMataKuliahRequest)

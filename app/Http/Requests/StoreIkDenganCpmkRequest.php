@@ -22,8 +22,6 @@ class StoreIkDenganCpmkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'uuid_ik' => 'required',
-            'uuid_mata_kuliah' => 'required',
             'kode_cpmk' => 'required',
             'deskripsi' => 'required',
             'bobot' => 'required',
@@ -33,8 +31,6 @@ class StoreIkDenganCpmkRequest extends FormRequest
     public function messages()
     {
         return [
-            'uuid_ik.required' => 'Kolom indikator kinerja harus di isi.',
-            'uuid_mata_kuliah.required' => 'Kolom mata kuliah harus di isi.',
             'kode_cpmk.required' => 'Kolom kode cpmk harus di isi.',
             'deskripsi.required' => 'Kolom deskripsi harus di isi.',
             'bobot.required' => 'Kolom bobot harus di isi.',

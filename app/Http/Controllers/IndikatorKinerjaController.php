@@ -31,6 +31,7 @@ class IndikatorKinerjaController extends BaseController
             $data->kode_ik = $storeIndikatorKinerjaRequest->kode_ik;
             $data->kemampuan = $storeIndikatorKinerjaRequest->kemampuan;
             $data->deskripsi = $storeIndikatorKinerjaRequest->deskripsi;
+            $data->bobot = $storeIndikatorKinerjaRequest->bobot;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);
@@ -56,6 +57,7 @@ class IndikatorKinerjaController extends BaseController
             $data->kode_ik = $storeIndikatorKinerjaRequest->kode_ik;
             $data->kemampuan = $storeIndikatorKinerjaRequest->kemampuan;
             $data->deskripsi = $storeIndikatorKinerjaRequest->deskripsi;
+            $data->bobot = $storeIndikatorKinerjaRequest->bobot;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);

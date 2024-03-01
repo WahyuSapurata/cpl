@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('kode_ik');
             $table->string('kemampuan');
             $table->string('deskripsi');
+            $table->string('bobot');
             $table->timestamps();
         });
     }

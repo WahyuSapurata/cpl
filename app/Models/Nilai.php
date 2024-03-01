@@ -16,8 +16,8 @@ class Nilai extends Model
         'uuid',
         'uuid_user',
         'uuid_mk',
-        'uuid_ik',
         'uuid_cpl',
+        'uuid_ik',
         'uuid_cpmk',
         'nilai',
     ];

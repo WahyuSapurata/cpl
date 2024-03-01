@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateIkDenganCpmkRequest;
 use App\Models\IkDenganCpmk;
 use App\Models\IndikatorKinerja;
 use App\Models\MataKuliah;
+use App\Models\User;
 
 class IkDenganCpmkController extends BaseController
 {
@@ -22,17 +23,18 @@ class IkDenganCpmkController extends BaseController
         $dataFull = IkDenganCpmk::all();
 
         $combinedData = $dataFull->map(function ($item) {
-            $dataIk = IndikatorKinerja::where('uuid', $item->uuid_ik)->first();
-            $dataMk = MataKuliah::where('uuid', $item->uuid_mata_kuliah)->first();
-            $item->kode_ik = $dataIk->kode_ik;
-            $item->nama_mk = $dataMk->mata_kuliah;
+            $dataUser = User::where('uuid', $item->uuid_user)->first();
+
+            $item->role = $dataUser->role;
             return $item;
         });
 
-        if (auth()->user()->role === 'operator') {
+        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur') {
             $dataCombine = $combinedData;
         } else {
-            $dataCombine = $combinedData->where('uuid_user', auth()->user()->uuid)->values();
+            $dataCombine = $combinedData->filter(function ($item) {
+                return $item->uuid_user === auth()->user()->uuid || $item->role === 'operator';
+            })->values();
         }
 
         // Mengembalikan response berdasarkan data yang sudah disaring
@@ -45,8 +47,6 @@ class IkDenganCpmkController extends BaseController
         try {
             $data = new IkDenganCpmk();
             $data->uuid_user = auth()->user()->uuid;
-            $data->uuid_ik = $storeIkDenganCpmkRequest->uuid_ik;
-            $data->uuid_mata_kuliah = $storeIkDenganCpmkRequest->uuid_mata_kuliah;
             $data->kode_cpmk = $storeIkDenganCpmkRequest->kode_cpmk;
             $data->deskripsi = $storeIkDenganCpmkRequest->deskripsi;
             $data->bobot = $storeIkDenganCpmkRequest->bobot;
@@ -73,8 +73,6 @@ class IkDenganCpmkController extends BaseController
         try {
             $data = IkDenganCpmk::where('uuid', $params)->first();
             $data->uuid_user = auth()->user()->uuid;
-            $data->uuid_ik = $storeIkDenganCpmkRequest->uuid_ik;
-            $data->uuid_mata_kuliah = $storeIkDenganCpmkRequest->uuid_mata_kuliah;
             $data->kode_cpmk = $storeIkDenganCpmkRequest->kode_cpmk;
             $data->deskripsi = $storeIkDenganCpmkRequest->deskripsi;
             $data->bobot = $storeIkDenganCpmkRequest->bobot;

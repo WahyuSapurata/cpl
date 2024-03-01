@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreNilaiRequest;
 use App\Http\Requests\UpdateNilaiRequest;
+use App\Models\CplDenganIk;
 use App\Models\CplProdi;
 use App\Models\IkDenganCpmk;
 use App\Models\IndikatorKinerja;
@@ -18,28 +19,27 @@ class NilaiController extends BaseController
         return view('dosen.nilai.index', compact('module'));
     }
 
-    public function get()
+    public function get($params)
     {
         // Mengambil semua data pengguna
         $dataFull = Nilai::all();
 
         $combinedData = $dataFull->map(function ($item) {
-            $dataMk = MataKuliah::where('uuid', $item->uuid_mk)->first();
-            $dataIk = IndikatorKinerja::where('uuid', $item->uuid_ik)->first();
             $dataCpl = CplProdi::where('uuid', $item->uuid_cpl)->first();
+            $dataIk = IndikatorKinerja::where('uuid', $item->uuid_ik)->first();
             $dataCpmk = IkDenganCpmk::where('uuid', $item->uuid_cpmk)->first();
 
-            $item->nama_mk = $dataMk->mata_kuliah;
-            $item->kode_ik = $dataIk->kode_ik;
             $item->kode_cpl = $dataCpl->kode_cpl;
+            $item->kode_ik = $dataIk->kode_ik;
             $item->kode_cpmk = $dataCpmk->kode_cpmk;
+            $item->bobot = $dataCpmk->bobot;
             return $item;
         });
 
-        if (auth()->user()->role === 'operator') {
+        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur') {
             $dataCombine = $combinedData;
         } else {
-            $dataCombine = $combinedData->where('uuid_user', auth()->user()->uuid)->values();
+            $dataCombine = $combinedData->where('uuid_user', auth()->user()->uuid)->where('uuid_mk', $params)->values();
         }
 
         // Mengembalikan response berdasarkan data yang sudah disaring
@@ -53,8 +53,8 @@ class NilaiController extends BaseController
             $data = new Nilai();
             $data->uuid_user = auth()->user()->uuid;
             $data->uuid_mk = $storeNilaiRequest->uuid_mk;
-            $data->uuid_ik = $storeNilaiRequest->uuid_ik;
             $data->uuid_cpl = $storeNilaiRequest->uuid_cpl;
+            $data->uuid_ik = $storeNilaiRequest->uuid_ik;
             $data->uuid_cpmk = $storeNilaiRequest->uuid_cpmk;
             $data->nilai = $storeNilaiRequest->nilai;
             $data->save();
@@ -81,8 +81,8 @@ class NilaiController extends BaseController
             $data = Nilai::where('uuid', $params)->first();
             $data->uuid_user = auth()->user()->uuid;
             $data->uuid_mk = $storeNilaiRequest->uuid_mk;
-            $data->uuid_ik = $storeNilaiRequest->uuid_ik;
             $data->uuid_cpl = $storeNilaiRequest->uuid_cpl;
+            $data->uuid_ik = $storeNilaiRequest->uuid_ik;
             $data->uuid_cpmk = $storeNilaiRequest->uuid_cpmk;
             $data->nilai = $storeNilaiRequest->nilai;
             $data->save();

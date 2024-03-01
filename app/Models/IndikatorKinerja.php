@@ -17,6 +17,7 @@ class IndikatorKinerja extends Model
         'kode_ik',
         'kemampuan',
         'deskripsi',
+        'bobot',
     ];
 
     protected static function boot()

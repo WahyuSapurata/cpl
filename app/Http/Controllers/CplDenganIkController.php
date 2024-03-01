@@ -31,15 +31,18 @@ class CplDenganIkController extends BaseController
             $dataIk = IndikatorKinerja::whereIn('uuid', $uuidIkArray)->get();
 
             $kodeIkArray = [];
+            $bobotIkArray = [];
 
             // Iterasi melalui setiap hasil yang cocok dari IndikatorKinerja
             foreach ($dataIk as $ik) {
                 // Tambahkan kode_ik ke dalam array
                 $kodeIkArray[] = $ik->kode_ik;
+                $bobotIkArray[] = $ik->bobot;
             }
 
             $item->kode_cpl = $dataCpl->kode_cpl;
             $item->kode_ik = $kodeIkArray; // Gunakan string yang berisi kode_ik yang dipisahkan koma
+            $item->bobot_ik = $bobotIkArray; // Gunakan string yang berisi kode_ik yang dipisahkan koma
             return $item;
         });
 
@@ -54,7 +57,6 @@ class CplDenganIkController extends BaseController
             $data = new CplDenganIk();
             $data->uuid_cpl = $storeCplDenganIkRequest->uuid_cpl;
             $data->uuid_ik = json_encode($storeCplDenganIkRequest->input('uuid_ik'));
-            $data->bobot = $storeCplDenganIkRequest->bobot;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);
@@ -79,7 +81,6 @@ class CplDenganIkController extends BaseController
             $data = CplDenganIk::where('uuid', $params)->first();
             $data->uuid_cpl = $storeCplDenganIkRequest->uuid_cpl;
             $data->uuid_ik = json_encode($storeCplDenganIkRequest->input('uuid_ik'));
-            $data->bobot = $storeCplDenganIkRequest->bobot;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);

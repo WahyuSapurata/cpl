@@ -24,7 +24,6 @@ class StoreCplDenganIkRequest extends FormRequest
         return [
             'uuid_cpl' => 'required',
             'uuid_ik' => 'required',
-            'bobot' => 'required',
         ];
     }
 
@@ -33,7 +32,6 @@ class StoreCplDenganIkRequest extends FormRequest
         return [
             'uuid_cpl.required' => 'Kolom kode cpl harus di isi.',
             'uuid_ik.required' => 'Kolom indikator kinerja harus di isi.',
-            'bobot.required' => 'Kolom bobot harus di isi.',
         ];
     }
 }

@@ -119,12 +119,6 @@
                         <small class="text-danger uuid_ik_error"></small>
                     </div>
 
-                    <div class="mb-10">
-                        <label class="form-label">Bobot</label>
-                        <input type="number" id="bobot" class="form-control" name="bobot">
-                        <small class="text-danger bobot_error"></small>
-                    </div>
-
                     <div class="separator separator-dashed mt-8 mb-5"></div>
                     <div class="d-flex gap-5">
                         <button type="submit" class="btn btn-primary btn-sm btn-submit d-flex align-items-center"><i
@@ -217,8 +211,16 @@
                         return html;
                     }
                 }, {
-                    data: 'bobot',
-                    className: 'text-center',
+                    data: 'bobot_ik',
+                    render: function(data, type, row, meta) {
+                        let html = "<ul>"; // Mulai daftar ul
+                        $.each(data, function(x, y) {
+                            html +=
+                                `<li>${y}</li>`; // Tambahkan setiap elemen ke dalam daftar
+                        });
+                        html += "</ul>"; // Tutup daftar ul
+                        return html;
+                    }
                 }, {
                     data: 'uuid',
                 }],

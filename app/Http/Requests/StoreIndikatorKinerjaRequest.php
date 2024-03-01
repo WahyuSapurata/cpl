@@ -25,6 +25,7 @@ class StoreIndikatorKinerjaRequest extends FormRequest
             'kode_ik' => 'required',
             'kemampuan' => 'required',
             'deskripsi' => 'required',
+            'bobot' => 'required',
         ];
     }
 
@@ -34,6 +35,7 @@ class StoreIndikatorKinerjaRequest extends FormRequest
             'kode_ik.required' => 'Kolom kode indikator kinerja harus di isi.',
             'kemampuan.required' => 'Kolom kemampuan harus di isi.',
             'deskripsi.required' => 'Kolom deskripsi harus di isi.',
+            'bobot.required' => 'Kolom deskripsi harus di isi.',
         ];
     }
 }

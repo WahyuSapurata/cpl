@@ -23,8 +23,6 @@ class StoreNilaiRequest extends FormRequest
     {
         return [
             'uuid_mk' => 'required',
-            'uuid_ik' => 'required',
-            'uuid_cpl' => 'required',
             'uuid_cpmk' => 'required',
             'nilai' => 'required|regex:/^[0-9.]+$/',
         ];
@@ -34,8 +32,6 @@ class StoreNilaiRequest extends FormRequest
     {
         return [
             'uuid_mk.required' => 'Kolom kode mata kuliah harus di isi.',
-            'uuid_ik.required' => 'Kolom kode indikator kinerja harus di isi.',
-            'uuid_cpl.required' => 'Kolom kode cpl harus di isi.',
             'uuid_cpmk.required' => 'Kolom kode cpmk harus di isi.',
             'nilai.required' => 'Kolom nilai harus di isi.',
             'nilai.regex' => 'Kolom nilai hanya boleh berisi angka dan titik.',

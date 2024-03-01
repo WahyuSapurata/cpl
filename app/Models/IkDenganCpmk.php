@@ -15,8 +15,6 @@ class IkDenganCpmk extends Model
     protected $fillable = [
         'uuid',
         'uuid_user',
-        'uuid_ik',
-        'uuid_mata_kuliah',
         'kode_cpmk',
         'deskripsi',
         'bobot',

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->uuid('uuid');
             $table->uuid('uuid_user');
             $table->uuid('uuid_mk');
-            $table->uuid('uuid_ik');
             $table->uuid('uuid_cpl');
+            $table->uuid('uuid_ik');
             $table->uuid('uuid_cpmk');
             $table->string('nilai');
             $table->timestamps();
