@@ -202,13 +202,6 @@
 
         let formData = new FormData();
 
-        $(document).on('click', '#button-side-form', function() {
-            $('#from_select_cpl').val(null).trigger("change");
-            $('#from_select_ik').val(null).trigger("change");
-            $('#from_select_cpmk').val(null).trigger("change");
-            control.overlay_form('Tambah', 'Nilai IK');
-        });
-
         $(document).ready(async function() {
             // Simulasikan klik pada tombol dengan ID 'autoClickButton'
             $('#button-matakul').click();
@@ -230,6 +223,55 @@
                     // Menanggapi perubahan pada elemen select
                     $('#mata_kuliah_select').on('change', function() {
                         let selectedUuid = $(this).val();
+
+                        $(document).off('click', '#button-side-form').on('click', '#button-side-form',
+                            function() {
+                                $('#from_select_cpl').val(null).trigger("change");
+                                $('#from_select_ik').val(null).trigger("change");
+                                $('#from_select_cpmk').val(null).trigger("change");
+                                control.overlay_form('Tambah', 'Nilai IK');
+                                control.push_select_ikc('Tambah', selectedUuid,
+                                    '/operator/get-indikator-kinerja', '#from_select_ik');
+                                control.push_select_cpmk('Tambah', selectedUuid,
+                                    '/operator/get-ikdengancpmk', '#from_select_cpmk');
+                            });
+
+                        $(document).off('click', '.button-update').on('click', '.button-update',
+                            function(e) {
+                                e.preventDefault();
+
+                                let uuid = $(this).attr('data-uuid');
+                                let url = '/dosen/show-nilai/' + uuid;
+
+                                // Membuat promise untuk push_select_ikc
+                                let promise1 = new Promise((resolve, reject) => {
+                                    control.push_select_ikc('Edit', selectedUuid,
+                                        '/operator/get-indikator-kinerja',
+                                        '#from_select_ik');
+                                    // Menunggu sampai push_select_ikc selesai
+                                    setTimeout(() => {
+                                        resolve();
+                                    }, 1000); // Sesuaikan timeout dengan kebutuhan Anda
+                                });
+
+                                // Membuat promise untuk push_select_cpmk
+                                let promise2 = new Promise((resolve, reject) => {
+                                    control.push_select_cpmk('Edit', selectedUuid,
+                                        '/operator/get-ikdengancpmk',
+                                        '#from_select_cpmk');
+                                    // Menunggu sampai push_select_cpmk selesai
+                                    setTimeout(() => {
+                                        resolve();
+                                    }, 1000); // Sesuaikan timeout dengan kebutuhan Anda
+                                });
+
+                                // Menjalankan overlay_form setelah kedua promise selesai
+                                Promise.all([promise1, promise2]).then(() => {
+                                    control.overlay_form('Update', 'Nilai IK', url);
+                                });
+                            });
+
+
                         formData.append('uuid_mk', selectedUuid);
                         $('#staticBackdrop_modal').modal('hide');
 
@@ -242,6 +284,7 @@
                             }
                         });
                     });
+
 
                     // function someFunction(selectedUuid) {
                     // Gunakan selectedUuid di sini
@@ -276,12 +319,6 @@
                 console.error('Gagal melakukan permintaan AJAX:', error);
             }
         });
-
-        $(document).on('click', '.button-update', function(e) {
-            e.preventDefault();
-            let url = '/dosen/show-nilai/' + $(this).attr('data-uuid');
-            control.overlay_form('Update', 'Nilai IK', url);
-        })
 
         $(document).on('click', '.button-delete', function(e) {
             e.preventDefault();
@@ -389,9 +426,7 @@
 
         $(function() {
             control.push_select_mk('/operator/get-mata-kuliah', '#from_select_mk');
-            control.push_select_ikc('/operator/get-indikator-kinerja', '#from_select_ik');
             control.push_select_cpl('/operator/get-cpl', '#from_select_cpl');
-            control.push_select_cpmk('/operator/get-ikdengancpmk', '#from_select_cpmk');
             // initDatatable();
         });
     </script>

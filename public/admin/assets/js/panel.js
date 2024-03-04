@@ -696,17 +696,32 @@ class Control {
         });
     }
 
-    push_select_ikc(url, element) {
+    push_select_ikc(type, selectedUuid, url, element) {
         $.ajax({
-            url: url,
+            url: '/dosen/get-nilai/' + selectedUuid,
             method: "GET",
             success: function (res) {
-                $(element).html("");
-                let html = "<option selected disabled>Pilih</option>";
-                $.each(res.data, function (x, y) {
-                    html += `<option value="${y.uuid}">${y.kode_ik}</option>`;
+                // Ambil uuid_cpmk dari setiap item dalam res.data
+                let uuid_ik = res.data.map(item => item.uuid_ik);
+
+                // Now that you have the uuid_ik, make the second AJAX request inside this success callback
+                $.ajax({
+                    url: url,
+                    method: "GET",
+                    success: function (res) {
+                        $(element).html("");
+                        let html = "<option selected disabled>Pilih</option>";
+                        let filteredData = res.data.filter(item => !uuid_ik.includes(item.uuid));
+                        let selectedData = (type === 'Tambah') ? filteredData : res.data;
+                        $.each(selectedData, function (x, y) {
+                            html += `<option value="${y.uuid}">${y.kode_ik}</option>`;
+                        });
+                        $(element).html(html);
+                    },
+                    error: function (xhr) {
+                        alert("gagal");
+                    },
                 });
-                $(element).html(html);
             },
             error: function (xhr) {
                 alert("gagal");
@@ -732,17 +747,32 @@ class Control {
         });
     }
 
-    push_select_cpmk(url, element) {
+    push_select_cpmk(type, selectedUuid, url, element) {
         $.ajax({
-            url: url,
+            url: '/dosen/get-nilai/' + selectedUuid,
             method: "GET",
             success: function (res) {
-                $(element).html("");
-                let html = "<option selected disabled>Pilih</option>";
-                $.each(res.data, function (x, y) {
-                    html += `<option value="${y.uuid}">${y.kode_cpmk}</option>`;
+                // Ambil uuid_cpmk dari setiap item dalam res.data
+                let uuid_cpmk = res.data.map(item => item.uuid_cpmk);
+
+                // Now that you have the uuid_cpmk, make the second AJAX request inside this success callback
+                $.ajax({
+                    url: url,
+                    method: "GET",
+                    success: function (res) {
+                        $(element).html("");
+                        let html = "<option selected disabled>Pilih</option>";
+                        let filteredData = res.data.filter(item => !uuid_cpmk.includes(item.uuid));
+                        let selectedData = (type === 'Tambah') ? filteredData : res.data;
+                        $.each(selectedData, function (x, y) {
+                            html += `<option value="${y.uuid}">${y.kode_cpmk}</option>`;
+                        });
+                        $(element).html(html);
+                    },
+                    error: function (xhr) {
+                        alert("gagal");
+                    },
                 });
-                $(element).html(html);
             },
             error: function (xhr) {
                 alert("gagal");
