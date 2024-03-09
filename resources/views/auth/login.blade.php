@@ -44,9 +44,19 @@ License: For each use you must have a valid license purchased only from above li
 <body data-kt-name="metronic" id="kt_body"
     class="app-blank app-blank bgi-size-cover bgi-position-center bgi-no-repeat">
     <!--begin::Root-->
-    <div class="d-flex flex-column flex-root" id="kt_app_root">
+    <div class="d-flex flex-column flex-root background-overlay" id="kt_app_root"
+        data-vide-bg="https://uin-alauddin.ac.id/themes/video/uin5/uin5" style="height: 620px;">
+        <div
+            style="position: absolute; z-index: -1; inset: 0px; overflow: hidden; background-size: cover; background-color: transparent; background-repeat: no-repeat; background-position: 50% 50%; background-image: none;">
+            <video autoplay="" loop="" muted=""
+                style="margin: auto; position: absolute; z-index: -1; top: 50%; left: 50%; transform: translate(-50%, -50%); visibility: visible; opacity: 1; width: 100%; height: auto;">
+                <source src="https://uin-alauddin.ac.id/themes/video/uin5/uin5.mp4" type="video/mp4">
+                <source src="https://uin-alauddin.ac.id/themes/video/uin5/uin5.webm" type="video/webm">
+                <source src="https://uin-alauddin.ac.id/themes/video/uin5/uin5.ogv" type="video/ogg">
+            </video>
+        </div>
         <!--begin::Authentication - Sign-in -->
-        <div class="d-flex flex-column flex-lg-row flex-column-fluid">
+        <div class="d-flex flex-column flex-lg-row flex-column-fluid z-index-1">
             <!--begin::Aside-->
             <div class="d-flex flex-center w-lg-50 p-10">
                 <!--begin::Wrapper-->
@@ -120,8 +130,11 @@ License: For each use you must have a valid license purchased only from above li
             </div>
             <!--end::Aside-->
             <!--begin::Body-->
-            <div class="d-none d-lg-flex flex-lg-row-fluid w-50 bgi-size-cover bgi-position-y-center bgi-position-x-start bgi-no-repeat"
-                style="background-image: url(admin/assets/media/auth/bg11.png)"></div>
+            <div class="d-none d-lg-flex flex-lg-row-fluid w-50 flex-center">
+                <div>
+                    <img src="{{ asset('logo.png') }}" width="360px" alt="">
+                </div>
+            </div>
             <!--begin::Body-->
         </div>
         <!--end::Authentication - Sign-in-->
