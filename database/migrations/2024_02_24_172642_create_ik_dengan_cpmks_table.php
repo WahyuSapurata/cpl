@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('uuid');
             $table->uuid('uuid_user');
             $table->string('kode_cpmk');
-            $table->string('deskripsi');
+            $table->text('deskripsi');
             $table->string('bobot');
             $table->timestamps();
         });
