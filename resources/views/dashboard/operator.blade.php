@@ -60,10 +60,10 @@
 @endsection
 @section('script')
     <script>
-        var myChart;
-
         $(document).ready(async function() {
             // Menampilkan elemen loading
+
+            var myChart; // Deklarasikan variabel di luar fungsi
 
             try {
                 // Melakukan permintaan AJAX pertama
@@ -96,6 +96,7 @@
                             if (response.success === true) {
                                 if (response.data.length > 0) {
                                     $('.loading').show();
+                                    console.log(response.data);
                                     getGrafik(response.data);
                                 } else {
                                     // Data kosong, kosongkan grafik atau lakukan sesuatu yang sesuai
@@ -118,68 +119,65 @@
             } catch (error) {
                 console.error('Gagal melakukan permintaan AJAX pertama:', error);
             }
-        });
 
-        function getGrafik(data) {
-            $('#onData').removeClass('d-none');
-            $('#noGrafik').addClass('d-none');
-            var ctx = document.getElementById('kt_chartjs');
-            var primaryColor = KTUtil.getCssVariableValue('--bs-success');
-            var fontFamily = KTUtil.getCssVariableValue('--bs-font-sans-serif');
+            function getGrafik(data) {
+                $('#onData').removeClass('d-none');
+                $('#noGrafik').addClass('d-none');
+                var ctx = document.getElementById('kt_chartjs');
+                var primaryColor = KTUtil.getCssVariableValue('--bs-success');
+                var fontFamily = KTUtil.getCssVariableValue('--bs-font-sans-serif');
 
-            var labels = [];
-            var jumlahData = [];
+                var labels = [];
+                var jumlahData = [];
 
-            data.forEach(function(item) {
-                labels.push(item.kode_cpl);
-                jumlahData.push(item.nilai_cpl);
-            });
+                data.forEach(function(item) {
+                    labels.push(item.kode_cpl);
+                    jumlahData.push(item.nilai_cpl);
+                });
 
-            // Chart data
-            const chartData = {
-                labels: labels,
-                datasets: [{
-                    label: 'Nilai CPL',
-                    backgroundColor: primaryColor,
-                    borderColor: primaryColor,
-                    data: jumlahData,
-                }]
-            };
+                // Chart data
+                const chartData = {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nilai CPL',
+                        backgroundColor: primaryColor,
+                        borderColor: primaryColor,
+                        data: jumlahData,
+                    }]
+                };
 
-            // Chart config
-            const config = {
-                type: 'bar',
-                data: chartData,
-                options: {
-                    plugins: {
-                        title: {
-                            display: false
-                        }
-                    },
-                    responsive: true,
-                    defaults: {
-                        global: {
-                            defaultFont: fontFamily
+                // Chart config
+                const config = {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        plugins: {
+                            title: {
+                                display: false
+                            }
+                        },
+                        responsive: true,
+                        defaults: {
+                            global: {
+                                defaultFont: fontFamily
+                            }
                         }
                     }
+                };
+
+                // Destroy existing chart if it exists
+                if (myChart) {
+                    myChart.destroy();
                 }
-            };
 
-            // Mendeklarasikan variabel myChart
-            var myChart;
-
-            // Destroy existing chart if it exists
-            if (myChart) {
-                myChart.destroy();
+                // Create new ChartJS instance
+                myChart = new Chart(ctx, config);
             }
 
-            // Create new ChartJS instance
-            myChart = new Chart(ctx, config);
-        }
-
-        function clearGrafik() {
-            $('#noGrafik').removeClass('d-none');
-            $('#onData').addClass('d-none');
-        }
+            function clearGrafik() {
+                $('#noGrafik').removeClass('d-none');
+                $('#onData').addClass('d-none');
+            }
+        });
     </script>
 @endsection
