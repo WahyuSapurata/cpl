@@ -45,7 +45,7 @@ class NilaiCpl extends BaseController
             $nilaiIk = 0;
             $bobotIk = 0;
             foreach ($combinedDatas as $row) {
-                $nilaiIk += $row->nilai * $row->bobot_cpmk;
+                $nilaiIk += $row->nilai * $row->bobot_cpmk / $row->bobot_cpmk * $row->bobot_ik;
                 $bobotIk += $row->bobot_ik;
             }
 

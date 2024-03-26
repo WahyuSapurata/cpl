@@ -55,8 +55,8 @@
                                         <tr class="fw-bolder fs-6 text-gray-800">
                                             <th>No</th>
                                             <th>Kode CPL</th>
-                                            <th>Nilai IK</th>
-                                            <th>Bobot CPMK</th>
+                                            <th>Nilai IK x Bobot</th>
+                                            <th>Jumlah Bobot IK</th>
                                             <th>Nilai CPL</th>
                                         </tr>
                                     </thead>

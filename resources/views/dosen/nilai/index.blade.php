@@ -370,7 +370,7 @@
                         data: null,
                         className: 'text-center',
                         render: function(data, type, row, meta) {
-                            const value = row.nilai * row.bobot; // Format to rupiah
+                            const value = row.nilai * row.bobot / row.bobot; // Format to rupiah
                             return value;
                         }
                     },
