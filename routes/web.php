@@ -68,6 +68,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::delete('/delete-ikdengancpmk/{params}', 'IkDenganCpmkController@delete')->name('delete-ikdengancpmk');
 
         Route::get('/nilaicpl', 'NilaiCpl@index')->name('nilaicpl');
+        Route::get('/nilai', 'NilaiController@index')->name('nilai');
     });
 
     Route::group(['prefix' => 'kajur', 'middleware' => ['auth'], 'as' => 'kajur.'], function () {
