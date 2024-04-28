@@ -120,7 +120,8 @@
                     </div>
 
                     <div class="mb-10">
-                        <label class="form-label">Bobot</label>
+                        <label class="form-label">Bobot <span style="font-style: italic; color: #EA443E">(1 = rendah, 2 =
+                                sedang, 3 = tinggi)</span></label>
                         <input type="number" id="bobot" class="form-control" name="bobot">
                         <small class="text-danger bobot_error"></small>
                     </div>
