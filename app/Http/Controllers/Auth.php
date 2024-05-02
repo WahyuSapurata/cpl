@@ -26,7 +26,9 @@ class Auth extends BaseController
 
     public function authenticated()
     {
-        if (auth()->user()->role === 'operator') {
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard-admin');
+        } elseif (auth()->user()->role === 'operator') {
             return redirect()->route('operator.dashboard-operator');
         } elseif (auth()->user()->role === 'kajur') {
             return redirect()->route('kajur.dashboard-kajur');

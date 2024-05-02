@@ -6,19 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Uuid;
 
-class IkDenganCpmk extends Model
+class SubCpmk extends Model
 {
     use HasFactory;
 
-    protected $table = 'ik_dengan_cpmks';
+    protected $table = 'sub_cpmks';
     protected $primaryKey = 'id';
     protected $fillable = [
         'uuid',
         'uuid_user',
         'uuid_matkul',
-        'kode_cpmk',
+        'uuid_cpmk',
+        'nama_sub',
         'deskripsi',
+        'teknik_penilaian',
         'bobot',
+        'nilai_sub',
     ];
 
     protected static function boot()

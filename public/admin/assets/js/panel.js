@@ -747,6 +747,24 @@ class Control {
         });
     }
 
+    push_select_kode_cpmk(url, element) {
+        $.ajax({
+            url: url,
+            method: "GET",
+            success: function (res) {
+                $(element).html("");
+                let html = "<option selected disabled>Pilih</option>";
+                $.each(res.data, function (x, y) {
+                    html += `<option value="${y.uuid}">${y.kode_cpmk}</option>`;
+                });
+                $(element).html(html);
+            },
+            error: function (xhr) {
+                alert("gagal");
+            },
+        });
+    }
+
     push_select_cpmk(type, selectedUuid, url, element) {
         $.ajax({
             url: '/dosen/get-nilai/' + selectedUuid,

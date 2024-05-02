@@ -19,7 +19,6 @@ return new class extends Migration
             $table->uuid('uuid_cpl');
             $table->uuid('uuid_ik');
             $table->uuid('uuid_cpmk');
-            $table->string('nilai');
             $table->timestamps();
         });
     }

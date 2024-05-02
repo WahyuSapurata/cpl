@@ -174,12 +174,6 @@
                         <small class="text-danger uuid_cpmk_error"></small>
                     </div>
 
-                    <div class="mb-10">
-                        <label class="form-label">Nilai CPMK</label>
-                        <input type="text" id="nilai" class="form-control" name="nilai">
-                        <small class="text-danger nilai_error"></small>
-                    </div>
-
                     <div class="separator separator-dashed mt-8 mb-5"></div>
                     <div class="d-flex gap-5">
                         <button type="submit" class="btn btn-primary btn-sm btn-submit d-flex align-items-center"><i

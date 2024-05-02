@@ -119,7 +119,6 @@ License: For each use you must have a valid license purchased only from above li
                                     <span class="indicator-label">Login</span>
                                     <!--end::Indicator label-->
                                 </button>
-                                <a href="" class="mt-2 btn btn-success">Simulasi</a>
                             </div>
                             <!--end::Submit button-->
                         </form>

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreNilaiRequest extends FormRequest
+class DataUser extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,19 +22,17 @@ class StoreNilaiRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'uuid_mk' => 'required',
-            'uuid_cpmk' => 'required',
-            // 'nilai' => 'required|regex:/^[0-9.]+$/',
+            'name' => 'required',
+            'username' => 'required|unique:users,username',
         ];
     }
 
     public function messages()
     {
         return [
-            'uuid_mk.required' => 'Kolom kode mata kuliah harus di isi.',
-            'uuid_cpmk.required' => 'Kolom kode cpmk harus di isi.',
-            'nilai.required' => 'Kolom nilai harus di isi.',
-            // 'nilai.regex' => 'Kolom nilai hanya boleh berisi angka dan titik.',
+            'name.required' => 'Kolom nama harus di isi.',
+            'username.required' => 'Kolom username harus di isi.',
+            'username.unique' => 'username sudah digunakan oleh pengguna lain.',
         ];
     }
 }

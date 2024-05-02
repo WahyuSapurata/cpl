@@ -22,8 +22,15 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/login-proses', 'Auth@login_proses')->name('login-proses');
     });
 
-    Route::group(['prefix' => 'operator', 'middleware' => ['auth'], 'as' => 'operator.'], function () {
-        Route::get('/dashboard-operator', 'Dashboard@dashboard_operator')->name('dashboard-operator');
+    Route::group(['prefix' => 'admin', 'middleware' => ['auth'], 'as' => 'admin.'], function () {
+        Route::get('/dashboard-admin', 'Dashboard@dashboard_admin')->name('dashboard-admin');
+
+        Route::get('/data-operator', 'DataUser@index')->name('data-operator');
+        Route::get('/get-data-operator', 'DataUser@get')->name('get-data-operator');
+        Route::get('/show-data-operator/{params}', 'DataUser@show')->name('show-data-operator');
+        Route::post('/add-data-operator', 'DataUser@store')->name('add-data-operator');
+        Route::post('/update-data-operator/{params}', 'DataUser@update')->name('update-data-operator');
+        Route::delete('/delete-data-operator/{params}', 'DataUser@delete')->name('delete-data-operator');
 
         Route::get('/data-dosen', 'DataDosen@index')->name('data-dosen');
         Route::get('/get-data-dosen', 'DataDosen@get')->name('get-data-dosen');
@@ -66,6 +73,70 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/add-ikdengancpmk', 'IkDenganCpmkController@store')->name('add-ikdengancpmk');
         Route::post('/update-ikdengancpmk/{params}', 'IkDenganCpmkController@update')->name('update-ikdengancpmk');
         Route::delete('/delete-ikdengancpmk/{params}', 'IkDenganCpmkController@delete')->name('delete-ikdengancpmk');
+
+        Route::get('/subcpmk', 'SubCpmkController@index')->name('subcpmk');
+
+        Route::get('/nilaicpl', 'NilaiCpl@index')->name('nilaicpl');
+        Route::get('/nilai', 'NilaiController@index')->name('nilai');
+    });
+
+    Route::group(['prefix' => 'operator', 'middleware' => ['auth'], 'as' => 'operator.'], function () {
+        Route::get('/dashboard-operator', 'Dashboard@dashboard_operator')->name('dashboard-operator');
+
+        Route::get('/data-dosen', 'DataDosen@index')->name('data-dosen');
+        Route::get('/get-data-dosen', 'DataDosen@get')->name('get-data-dosen');
+        Route::get('/show-data-dosen/{params}', 'DataDosen@show')->name('show-data-dosen');
+        Route::post('/add-data-dosen', 'DataDosen@store')->name('add-data-dosen');
+        Route::post('/update-data-dosen/{params}', 'DataDosen@update')->name('update-data-dosen');
+        Route::delete('/delete-data-dosen/{params}', 'DataDosen@delete')->name('delete-data-dosen');
+
+        Route::get('/mata-kuliah', 'MataKuliahController@index')->name('mata-kuliah');
+        Route::get('/get-mata-kuliah', 'MataKuliahController@get')->name('get-mata-kuliah');
+        Route::get('/show-mata-kuliah/{params}', 'MataKuliahController@show')->name('show-mata-kuliah');
+        Route::post('/add-mata-kuliah', 'MataKuliahController@store')->name('add-mata-kuliah');
+        Route::post('/update-mata-kuliah/{params}', 'MataKuliahController@update')->name('update-mata-kuliah');
+        Route::delete('/delete-mata-kuliah/{params}', 'MataKuliahController@delete')->name('delete-mata-kuliah');
+
+        Route::get('/cpl', 'CplProdiController@index')->name('cpl');
+        Route::get('/get-cpl', 'CplProdiController@get')->name('get-cpl');
+        Route::get('/show-cpl/{params}', 'CplProdiController@show')->name('show-cpl');
+        Route::post('/add-cpl', 'CplProdiController@store')->name('add-cpl');
+        Route::post('/update-cpl/{params}', 'CplProdiController@update')->name('update-cpl');
+        Route::delete('/delete-cpl/{params}', 'CplProdiController@delete')->name('delete-cpl');
+
+        Route::get('/indikator-kinerja', 'IndikatorKinerjaController@index')->name('indikator-kinerja');
+        Route::get('/get-indikator-kinerja', 'IndikatorKinerjaController@get')->name('get-indikator-kinerja');
+        Route::get('/show-indikator-kinerja/{params}', 'IndikatorKinerjaController@show')->name('show-indikator-kinerja');
+        Route::post('/add-indikator-kinerja', 'IndikatorKinerjaController@store')->name('add-indikator-kinerja');
+        Route::post('/update-indikator-kinerja/{params}', 'IndikatorKinerjaController@update')->name('update-indikator-kinerja');
+        Route::delete('/delete-indikator-kinerja/{params}', 'IndikatorKinerjaController@delete')->name('delete-indikator-kinerja');
+
+        // Route::get('/cpldenganik', 'CplDenganIkController@index')->name('cpldenganik');
+        // Route::get('/get-cpldenganik', 'CplDenganIkController@get')->name('get-cpldenganik');
+        // Route::get('/show-cpldenganik/{params}', 'CplDenganIkController@show')->name('show-cpldenganik');
+        // Route::post('/add-cpldenganik', 'CplDenganIkController@store')->name('add-cpldenganik');
+        // Route::post('/update-cpldenganik/{params}', 'CplDenganIkController@update')->name('update-cpldenganik');
+        // Route::delete('/delete-cpldenganik/{params}', 'CplDenganIkController@delete')->name('delete-cpldenganik');
+
+        Route::get('/ikdengancpmk', 'IkDenganCpmkController@index')->name('ikdengancpmk');
+        Route::get('/get-ikdengancpmk', 'IkDenganCpmkController@get')->name('get-ikdengancpmk');
+        Route::get('/get-cpmk/{params}', 'IkDenganCpmkController@get_cpmk')->name('get-cpmk');
+        Route::get('/show-ikdengancpmk/{params}', 'IkDenganCpmkController@show')->name('show-ikdengancpmk');
+        Route::post('/add-ikdengancpmk', 'IkDenganCpmkController@store')->name('add-ikdengancpmk');
+        Route::post('/update-ikdengancpmk/{params}', 'IkDenganCpmkController@update')->name('update-ikdengancpmk');
+        Route::delete('/delete-ikdengancpmk/{params}', 'IkDenganCpmkController@delete')->name('delete-ikdengancpmk');
+
+        Route::get('/subcpmk', 'SubCpmkController@index')->name('subcpmk');
+        Route::get('/matkulsubcpmk/{params}', 'SubCpmkController@matkulcpmk')->name('matkulsubcpmk');
+        Route::get('/subcpmk/{params}', 'SubCpmkController@subcpmk')->name('subcpmk');
+        Route::get('/get-subcpmk/{params}', 'SubCpmkController@get_sub_cpmk')->name('get-subcpmk');
+        Route::get('/show-subcpmk/{params}', 'SubCpmkController@show')->name('show-subcpmk');
+        Route::post('/add-subcpmk', 'SubCpmkController@store')->name('add-subcpmk');
+        Route::post('/update-subcpmk/{params}', 'SubCpmkController@update')->name('update-subcpmk');
+        Route::delete('/delete-subcpmk/{params}', 'SubCpmkController@delete')->name('delete-subcpmk');
+
+        Route::get('/matkulcpmk/{params}', 'IkDenganCpmkController@matkulcpmk')->name('matkulcpmk');
+        Route::get('/cpmk/{params}', 'IkDenganCpmkController@cpmk')->name('cpmk');
 
         Route::get('/nilaicpl', 'NilaiCpl@index')->name('nilaicpl');
         Route::get('/nilai', 'NilaiController@index')->name('nilai');

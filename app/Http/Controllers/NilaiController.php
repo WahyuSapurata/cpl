@@ -10,6 +10,7 @@ use App\Models\IkDenganCpmk;
 use App\Models\IndikatorKinerja;
 use App\Models\MataKuliah;
 use App\Models\Nilai;
+use App\Models\SubCpmk;
 
 class NilaiController extends BaseController
 {
@@ -29,22 +30,32 @@ class NilaiController extends BaseController
             $dataIk = IndikatorKinerja::where('uuid', $item->uuid_ik)->first();
             $dataCpmk = IkDenganCpmk::where('uuid', $item->uuid_cpmk)->first();
 
+            $dataSubCpmk = SubCpmk::where('uuid_cpmk', $dataCpmk->uuid)->get();
+            $nilai = 0;
+            $bobot = 0;
+            foreach ($dataSubCpmk as $itemsub) {
+                $nilai += $itemsub->nilai_sub;
+                $bobot += $itemsub->bobot / 100;
+            }
+
             $item->kode_cpl = $dataCpl->kode_cpl;
             $item->kode_ik = $dataIk->kode_ik;
             $item->kode_cpmk = $dataCpmk->kode_cpmk;
             $item->bobot = $dataCpmk->bobot;
+            $item->nilai = $nilai * $bobot;
             return $item;
         });
 
         if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur') {
             $dataCombine = $combinedData;
         } else {
-            $dataCombine = $combinedData->where('uuid_user', auth()->user()->uuid)->where('uuid_mk', $params)->values();
+            $dataCombine = $combinedData->where('uuid_user', auth()->user()->uuid)->where('uuid_mk', $params)->all();
         }
 
         // Mengembalikan response berdasarkan data yang sudah disaring
         return $this->sendResponse($dataCombine, 'Get data success');
     }
+
 
     public function store(StoreNilaiRequest $storeNilaiRequest)
     {
@@ -56,7 +67,6 @@ class NilaiController extends BaseController
             $data->uuid_cpl = $storeNilaiRequest->uuid_cpl;
             $data->uuid_ik = $storeNilaiRequest->uuid_ik;
             $data->uuid_cpmk = $storeNilaiRequest->uuid_cpmk;
-            $data->nilai = $storeNilaiRequest->nilai;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);
@@ -84,7 +94,6 @@ class NilaiController extends BaseController
             $data->uuid_cpl = $storeNilaiRequest->uuid_cpl;
             $data->uuid_ik = $storeNilaiRequest->uuid_ik;
             $data->uuid_cpmk = $storeNilaiRequest->uuid_cpmk;
-            $data->nilai = $storeNilaiRequest->nilai;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);

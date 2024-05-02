@@ -24,6 +24,16 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         User::updateOrCreate(
+            ['username' => 'admin'],
+            [
+                'uuid' => Uuid::uuid4()->toString(),
+                'name' => 'admin',
+                'password' => Hash::make('<>password'),
+                'role' => 'admin',
+            ]
+        );
+
+        User::updateOrCreate(
             ['username' => 'operator'],
             [
                 'uuid' => Uuid::uuid4()->toString(),

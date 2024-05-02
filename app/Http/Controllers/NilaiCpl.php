@@ -7,6 +7,7 @@ use App\Models\CplProdi;
 use App\Models\IkDenganCpmk;
 use App\Models\IndikatorKinerja;
 use App\Models\Nilai;
+use App\Models\SubCpmk;
 use Illuminate\Http\Request;
 
 class NilaiCpl extends BaseController
@@ -36,8 +37,16 @@ class NilaiCpl extends BaseController
             $combinedData = $dataCombine->map(function ($itemCpl) {
                 $dataIk = IndikatorKinerja::where('uuid', $itemCpl->uuid_ik)->first();
                 $dataCpmk = IkDenganCpmk::where('uuid', $itemCpl->uuid_cpmk)->first();
+                $dataSubCpmk = SubCpmk::where('uuid_cpmk', $dataCpmk->uuid)->get();
+                $nilai = 0;
+                $bobot = 0;
+                foreach ($dataSubCpmk as $itemsub) {
+                    $nilai += $itemsub->nilai_sub;
+                    $bobot += $itemsub->bobot / 100;
+                }
                 $itemCpl->bobot_ik = $dataIk->bobot;
                 $itemCpl->bobot_cpmk = $dataCpmk->bobot;
+                $itemCpl->nilai = $nilai * $bobot;
                 return $itemCpl;
             });
             $combinedDatas = $combinedData->where('uuid_cpl', $item->uuid)->values();

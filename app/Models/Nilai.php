@@ -19,7 +19,6 @@ class Nilai extends Model
         'uuid_cpl',
         'uuid_ik',
         'uuid_cpmk',
-        'nilai',
     ];
 
     protected static function boot()

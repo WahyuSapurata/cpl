@@ -14,6 +14,12 @@ class Dashboard extends BaseController
         return redirect()->route('login.login-akun');
     }
 
+    public function dashboard_admin()
+    {
+        $module = 'Dashboard';
+        return view('dashboard.admin', compact('module'));
+    }
+
     public function dashboard_operator()
     {
         $module = 'Dashboard';
