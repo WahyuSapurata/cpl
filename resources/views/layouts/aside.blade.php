@@ -240,6 +240,25 @@
             @if ($role === 'operator')
                 <!--begin::Menu item-->
                 <div class="menu-item">
+                    <a class="menu-link {{ isset($path[1]) && $path[1] === 'data-dosen' ? 'active' : '' }}"
+                        href="{{ route('admin.data-dosen') }}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                            <span class="svg-icon svg-icon-2">
+                                <img src="{{ isset($path[1]) && $path[1] === 'data-dosen' ? url('admin/assets/media/icons/aside/adminact.svg') : url('/admin/assets/media/icons/aside/admindef.svg') }}"
+                                    alt="">
+                            </span>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title"
+                            style="{{ isset($path[1]) && $path[1] === 'data-dosen' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Data
+                            Dosen</span>
+                    </a>
+                </div>
+                <!--end::Menu item-->
+
+                <!--begin::Menu item-->
+                <div class="menu-item">
                     <a class="menu-link {{ isset($path[1]) && $path[1] === 'mata-kuliah' ? 'active' : '' }}"
                         href="{{ route('admin.mata-kuliah') }}">
                         <span class="menu-icon">
@@ -482,7 +501,8 @@
                             <!--end::Svg Icon-->
                         </span>
                         <span class="menu-title"
-                            style="{{ isset($path[1]) && $path[1] === 'cpl' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">CPL</span>
+                            style="{{ isset($path[1]) && $path[1] === 'cpl' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Rumusan
+                            CPL/PLO</span>
                     </a>
                 </div>
                 <!--end::Menu item-->
@@ -520,6 +540,25 @@
                         </span>
                         <span class="menu-title"
                             style="{{ isset($path[1]) && $path[1] === 'ikdengancpmk' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">CPMK</span>
+                    </a>
+                </div>
+                <!--end::Menu item-->
+
+                <!--begin::Menu item-->
+                <div class="menu-item">
+                    <a class="menu-link {{ isset($path[1]) && $path[1] === 'subcpmk' ? 'active' : '' }}"
+                        href="{{ route('admin.subcpmk') }}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                            <span class="svg-icon svg-icon-2">
+                                <img src="{{ isset($path[1]) && $path[1] === 'subcpmk' ? url('admin/assets/media/icons/aside/persetujuanpoact.svg') : url('/admin/assets/media/icons/aside/persetujuanpodef.svg') }}"
+                                    alt="">
+                            </span>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title"
+                            style="{{ isset($path[1]) && $path[1] === 'subcpmk' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Sub
+                            CPMK</span>
                     </a>
                 </div>
                 <!--end::Menu item-->
