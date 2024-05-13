@@ -32,6 +32,12 @@ class Dashboard extends BaseController
         return view('dashboard.kajur', compact('module'));
     }
 
+    public function dashboard_lpm()
+    {
+        $module = 'Dashboard';
+        return view('dashboard.lpm', compact('module'));
+    }
+
     public function dashboard_dosen()
     {
         $module = 'Dashboard';

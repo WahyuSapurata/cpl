@@ -34,6 +34,8 @@ class Auth extends BaseController
             return redirect()->route('kajur.dashboard-kajur');
         } elseif (auth()->user()->role === 'dosen') {
             return redirect()->route('dosen.dashboard-dosen');
+        } elseif (auth()->user()->role === 'lpm') {
+            return redirect()->route('lpm.dashboard-lpm');
         }
     }
 

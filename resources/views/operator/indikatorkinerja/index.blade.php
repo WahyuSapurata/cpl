@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@if (auth()->user()->role != 'kajur')
+@if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen' && auth()->user()->role != 'lpm')
     @section('button')
         <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
             <!--begin::Page title-->
@@ -41,7 +41,7 @@
                                             <th>Kompetensi</th>
                                             <th>Deskripsi</th>
                                             <th>Bobot</th>
-                                            @if (auth()->user()->role != 'kajur')
+                                            @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen' && auth()->user()->role != 'lpm')
                                                 <th>Aksi</th>
                                             @endif
                                         </tr>
@@ -223,14 +223,14 @@
                         data: 'bobot',
                         className: 'text-center',
                     },
-                    @if (auth()->user()->role != 'kajur')
+                    @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen' && auth()->user()->role != 'lpm')
 
                         {
                             data: 'uuid',
                         }
                     @endif
                 ],
-                @if (auth()->user()->role != 'kajur')
+                @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen' && auth()->user()->role != 'lpm')
                     columnDefs: [{
                         targets: -1,
                         title: 'Aksi',

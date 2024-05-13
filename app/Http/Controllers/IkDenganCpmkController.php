@@ -41,16 +41,19 @@ class IkDenganCpmkController extends BaseController
             $dataUser = User::where('uuid', $item->uuid_user)->first();
             $dataMatkul = MataKuliah::where('uuid', $item->uuid_matkul)->first();
 
-            $item->role = $dataUser->role;
-            $item->matkul = $dataMatkul->mata_kuliah;
+            $item->role = $dataUser->role ?? null;
+            $item->matkul = $dataMatkul->mata_kuliah ?? null;
             return $item;
         });
 
-        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur' || auth()->user()->role === 'admin') {
+        // Filter data berdasarkan peran pengguna
+        $userRole = auth()->user()->role;
+        if ($userRole === 'operator' || $userRole === 'kajur' || $userRole === 'lpm' || $userRole === 'admin') {
             $dataCombine = $combinedData;
         } else {
-            $dataCombine = $combinedData->filter(function ($item) {
-                return $item->uuid_user === auth()->user()->uuid || $item->role === 'operator';
+            $userUuid = auth()->user()->uuid;
+            $dataCombine = $combinedData->filter(function ($item) use ($userUuid, $userRole) {
+                return $item->uuid_user === $userUuid || $item->role === 'operator';
             })->values();
         }
 

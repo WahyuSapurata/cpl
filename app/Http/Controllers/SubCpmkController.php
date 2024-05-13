@@ -34,7 +34,7 @@ class SubCpmkController extends BaseController
 
     public function get_sub_cpmk($params)
     {
-        // Mengambil semua data pengguna
+        // Mengambil semua data sub cpmk
         $dataFull = SubCpmk::where('uuid_matkul', $params)->get();
 
         $combinedData = $dataFull->map(function ($item) {
@@ -42,17 +42,20 @@ class SubCpmkController extends BaseController
             $dataMatkul = MataKuliah::where('uuid', $item->uuid_matkul)->first();
             $dataCpmk = IkDenganCpmk::where('uuid', $item->uuid_cpmk)->first();
 
-            $item->role = $dataUser->role;
-            $item->matkul = $dataMatkul->mata_kuliah;
-            $item->kode_cpmk = $dataCpmk->kode_cpmk;
+            $item->role = $dataUser->role ?? null;
+            $item->matkul = $dataMatkul->mata_kuliah ?? null;
+            $item->kode_cpmk = $dataCpmk->kode_cpmk ?? null;
             return $item;
         });
 
-        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur' || auth()->user()->role === 'admin') {
+        // Filter data berdasarkan peran pengguna
+        $userRole = auth()->user()->role;
+        if ($userRole === 'operator' || $userRole === 'kajur' || $userRole === 'lpm' || $userRole === 'admin') {
             $dataCombine = $combinedData;
         } else {
-            $dataCombine = $combinedData->filter(function ($item) {
-                return $item->uuid_user === auth()->user()->uuid || $item->role === 'operator';
+            $userUuid = auth()->user()->uuid;
+            $dataCombine = $combinedData->filter(function ($item) use ($userUuid, $userRole) {
+                return $item->uuid_user === $userUuid || $item->role === 'operator';
             })->values();
         }
 

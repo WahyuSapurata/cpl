@@ -152,6 +152,16 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/nilaicpl', 'NilaiCpl@index')->name('nilaicpl');
     });
 
+    Route::group(['prefix' => 'lpm', 'middleware' => ['auth'], 'as' => 'lpm.'], function () {
+        Route::get('/dashboard-lpm', 'Dashboard@dashboard_lpm')->name('dashboard-lpm');
+
+        Route::get('/cpl', 'CplProdiController@index')->name('cpl');
+        Route::get('/indikator-kinerja', 'IndikatorKinerjaController@index')->name('indikator-kinerja');
+        Route::get('/ikdengancpmk', 'IkDenganCpmkController@index')->name('ikdengancpmk');
+        Route::get('/nilai', 'NilaiController@index')->name('nilai');
+        Route::get('/nilaicpl', 'NilaiCpl@index')->name('nilaicpl');
+    });
+
     Route::group(['prefix' => 'dosen', 'middleware' => ['auth'], 'as' => 'dosen.'], function () {
         Route::get('/dashboard-dosen', 'Dashboard@dashboard_dosen')->name('dashboard-dosen');
 

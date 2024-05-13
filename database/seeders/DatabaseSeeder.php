@@ -52,5 +52,15 @@ class DatabaseSeeder extends Seeder
                 'role' => 'kajur',
             ]
         );
+
+        User::updateOrCreate(
+            ['username' => 'lpm'],
+            [
+                'uuid' => Uuid::uuid4()->toString(),
+                'name' => 'lpm',
+                'password' => Hash::make('<>password'),
+                'role' => 'lpm',
+            ]
+        );
     }
 }
