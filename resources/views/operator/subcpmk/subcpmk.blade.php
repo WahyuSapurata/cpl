@@ -274,8 +274,42 @@
             e.preventDefault();
             let url = '/operator/delete-subcpmk/' + $(this).attr('data-uuid');
             let label = $(this).attr('data-label');
-            getCpmk();
-            control.ajaxDelete(url, label)
+
+
+            let token = $("meta[name='csrf-token']").attr("content");
+            let table_ = $('#kt_table_data');
+            Swal.fire({
+                title: `Apakah anda yakin akan menghapus data ${label} ?`,
+                text: "Anda tidak akan dapat mengembalikan ini!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, hapus itu!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: "DELETE",
+                        data: {
+                            id: $(this).attr("data-id"),
+                            _token: token,
+                        },
+                        success: function() {
+                            swal
+                                .fire({
+                                    title: "Menghapus!",
+                                    text: "Data Anda telah dihapus.",
+                                    icon: "success",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            table_.DataTable().ajax.reload();
+                            getCpmk();
+                        },
+                    });
+                }
+            });
         })
 
         $(document).on('keyup', '#search_', function(e) {
