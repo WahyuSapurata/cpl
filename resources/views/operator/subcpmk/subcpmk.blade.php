@@ -274,8 +274,8 @@
             e.preventDefault();
             let url = '/operator/delete-subcpmk/' + $(this).attr('data-uuid');
             let label = $(this).attr('data-label');
-            control.ajaxDelete(url, label)
             getCpmk();
+            control.ajaxDelete(url, label)
         })
 
         $(document).on('keyup', '#search_', function(e) {
