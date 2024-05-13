@@ -181,6 +181,25 @@
 
                 <!--begin::Menu item-->
                 <div class="menu-item">
+                    <a class="menu-link {{ isset($path[1]) && $path[1] === 'subcpmk' ? 'active' : '' }}"
+                        href="{{ route('admin.subcpmk') }}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                            <span class="svg-icon svg-icon-2">
+                                <img src="{{ isset($path[1]) && $path[1] === 'subcpmk' ? url('admin/assets/media/icons/aside/persetujuanpoact.svg') : url('/admin/assets/media/icons/aside/persetujuanpodef.svg') }}"
+                                    alt="">
+                            </span>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title"
+                            style="{{ isset($path[1]) && $path[1] === 'subcpmk' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Sub
+                            CPMK</span>
+                    </a>
+                </div>
+                <!--end::Menu item-->
+
+                <!--begin::Menu item-->
+                <div class="menu-item">
                     <a class="menu-link {{ isset($path[1]) && $path[1] === 'nilai' ? 'active' : '' }}"
                         href="{{ route('admin.nilai') }}">
                         <span class="menu-icon">
