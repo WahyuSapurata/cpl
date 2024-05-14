@@ -46,7 +46,7 @@ class NilaiController extends BaseController
             return $item;
         });
 
-        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur') {
+        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur' || auth()->user()->role === 'lpm' || auth()->user()->role === 'admin') {
             $dataCombine = $combinedData;
         } else {
             $dataCombine = $combinedData->where('uuid_user', auth()->user()->uuid)->where('uuid_mk', $params)->all();

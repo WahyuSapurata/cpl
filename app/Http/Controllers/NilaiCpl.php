@@ -23,7 +23,7 @@ class NilaiCpl extends BaseController
         // Mengambil semua data pengguna
         $dataFull = Nilai::all();
 
-        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur') {
+        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur' || auth()->user()->role === 'lpm' || auth()->user()->role === 'admin') {
             $dataCombine = $dataFull->where('uuid_mk', $params)->values();
         } else {
             $dataCombine = $dataFull->where('uuid_user', auth()->user()->uuid)->where('uuid_mk', $params)->values();
