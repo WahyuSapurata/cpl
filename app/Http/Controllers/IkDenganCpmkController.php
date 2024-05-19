@@ -53,7 +53,7 @@ class IkDenganCpmkController extends BaseController
         } else {
             $userUuid = auth()->user()->uuid;
             $dataCombine = $combinedData->filter(function ($item) use ($userUuid, $userRole) {
-                return $item->uuid_user === $userUuid || $item->role === 'operator';
+                return $item->uuid_user === $userUuid || $item->role === 'operator'|| $item->role === 'admin';
             })->values();
         }
 

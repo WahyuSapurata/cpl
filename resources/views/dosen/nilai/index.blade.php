@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@if (auth()->user()->role != 'kajur' && auth()->user()->role != 'operator' && auth()->user()->role != 'lpm')
+@if (auth()->user()->role != 'kajur' && auth()->user()->role != 'operator' && auth()->user()->role != 'lpm' && auth()->user()->role != 'admin')
     @section('button')
         <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
             <!--begin::Page title-->
@@ -83,7 +83,7 @@
                                             <th>Nilai CPMK</th>
                                             <th>Bobot</th>
                                             <th>Nilai IK</th>
-                                            @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'operator' && auth()->user()->role != 'lpm')
+                                            @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'operator' && auth()->user()->role != 'lpm' && auth()->user()->role != 'admin')
                                                 <th>Aksi</th>
                                             @endif
                                         </tr>
@@ -368,13 +368,13 @@
                             return value;
                         }
                     },
-                    @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'operator' && auth()->user()->role != 'lpm')
+                    @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'operator' && auth()->user()->role != 'lpm' && auth()->user()->role != 'admin')
                         {
                             data: 'uuid',
                         }
                     @endif
                 ],
-                @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'operator' && auth()->user()->role != 'lpm')
+                @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'operator' && auth()->user()->role != 'lpm' && auth()->user()->role != 'admin')
                     columnDefs: [{
                         targets: -1,
                         title: 'Aksi',
