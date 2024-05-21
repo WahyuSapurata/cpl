@@ -26,7 +26,7 @@ class MataKuliahController extends BaseController
             return $item;
         });
 
-        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur' || auth()->user()->role === 'admin') {
+        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur' || auth()->user()->role === 'admin' || auth()->user()->role === 'lpm') {
             $dataCombine = $combinedData;
         } else {
             $dataCombine = $combinedData->where('uuid_dosen', auth()->user()->uuid)->values();
