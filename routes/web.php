@@ -140,6 +140,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
         Route::get('/nilaicpl', 'NilaiCpl@index')->name('nilaicpl');
         Route::get('/nilai', 'NilaiController@index')->name('nilai');
+
+        Route::get('/extract-pdf/{params}', 'NilaiCpl@extract_pdf')->name('extract-pdf');
     });
 
     Route::group(['prefix' => 'kajur', 'middleware' => ['auth'], 'as' => 'kajur.'], function () {

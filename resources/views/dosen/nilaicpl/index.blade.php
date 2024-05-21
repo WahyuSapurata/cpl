@@ -1,4 +1,13 @@
 @extends('layouts.layout')
+@section('button')
+    <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
+        <!--begin::Actions-->
+        <div class="d-flex align-items-center gap-2 gap-lg-3">
+            <a href="#" id="btn-extract" class="btn btn-sm btn-danger export">Export PDF</a>
+        </div>
+        <!--end::Actions-->
+    </div>
+@endsection
 @section('content')
     <!-- Button trigger modal -->
     <button type="button" id="button-matakul" class="btn btn-primary d-none" data-bs-toggle="modal"
@@ -102,6 +111,7 @@
                         $('#staticBackdrop_modal').modal('hide');
 
                         initDatatable(selectedUuid);
+                        extract(selectedUuid);
 
                         $.each(res.data, function(x, y) {
                             if (y.uuid === selectedUuid) {
@@ -162,6 +172,13 @@
                     var rowIndex = startIndex + index + 1;
                     $('td', row).eq(0).html(rowIndex);
                 },
+            });
+        };
+
+        const extract = (selectedUuid) => {
+            $('#btn-extract').click(function(e) {
+                e.preventDefault();
+                window.open(`/operator/extract-pdf/` + selectedUuid, "_blank");
             });
         };
     </script>
