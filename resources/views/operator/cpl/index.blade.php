@@ -202,7 +202,7 @@
                         data: 'deskripsi',
                         className: 'text-center',
                     },
-                    @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen' && auth()->user()->role != 'lpm')
+                    @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen'&& auth()->user()->role != 'lpm')
                         {
                             data: 'uuid',
                         }
@@ -215,6 +215,7 @@
                         width: '8rem',
                         orderable: false,
                         render: function(data, type, full, meta) {
+
                             return `
                             <a href="javascript:;" type="button" data-uuid="${data}" data-kt-drawer-show="true" data-kt-drawer-target="#side_form" class="btn btn-primary button-update btn-icon btn-sm">
                                 <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -240,6 +241,8 @@
                                 </svg>
                             </a>
                         `;
+
+
                         },
                     }],
                 @endif

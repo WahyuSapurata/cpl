@@ -41,7 +41,7 @@
                                             <th>Nama Sub</th>
                                             <th>Deskripsi</th>
                                             <th>Teknik Penilaian</th>
-                                            <th>Bobot</th>
+                                            <th>Bobot (%)</th>
                                             <th>Nilai Sub CPMK</th>
                                             @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'lpm')
                                                 <th>Aksi</th>
