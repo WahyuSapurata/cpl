@@ -310,12 +310,8 @@ class Control {
                         })
                         .then(function () {
                             $("#side_form_close").trigger("click");
-                            table_.DataTable().ajax.reload();
-                            $('#kt_modal_1').modal('hide');
                             $("form")[0].reset();
                             $("#from_select").val(null).trigger("change");
-                            $("#pajak-select").val(null).trigger("change");
-                            // $(".form-select").val(null).trigger("change");
                         });
                 } else {
                     $("form")[0].reset();
@@ -798,15 +794,15 @@ class Control {
         });
     }
 
-    push_select_bank(url, element) {
+    push_select_mahasiswa(url, element) {
         $.ajax({
             url: url,
             method: "GET",
             success: function (res) {
                 $(element).html("");
-                let html = "<option selected disabled>Pilih jenis inputan</option>";
+                let html = "<option selected disabled>Pilih</option>";
                 $.each(res.data, function (x, y) {
-                    html += `<option value="${y.uuid}">${y.nama_bank}</option>`;
+                    html += `<option value="${y.uuid}">${y.nama}</option>`;
                 });
                 $(element).html(html);
             },
@@ -843,7 +839,7 @@ class Control {
         $(element).html(html);
     }
 
-    push_select_kop(data, element) {
+    push_select_data(data, element) {
         $(element).html("");
         let html = "<option></option>";
         $.each(data, function (x, y) {

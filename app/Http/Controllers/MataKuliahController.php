@@ -36,6 +36,12 @@ class MataKuliahController extends BaseController
         return $this->sendResponse($dataCombine, 'Get data success');
     }
 
+    public function get_by_user()
+    {
+        $data = MataKuliah::where('uuid_dosen', auth()->user()->uuid)->get();
+        return $this->sendResponse($data, 'Get data success');
+    }
+
     public function store(StoreMataKuliahRequest $storeMataKuliahRequest)
     {
         $data = array();
@@ -45,8 +51,6 @@ class MataKuliahController extends BaseController
             $data->kode_mk = $storeMataKuliahRequest->kode_mk;
             $data->mata_kuliah = $storeMataKuliahRequest->mata_kuliah;
             $data->sks = $storeMataKuliahRequest->sks;
-            $data->kelas = $storeMataKuliahRequest->kelas;
-            $data->semester = $storeMataKuliahRequest->semester;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);
@@ -73,8 +77,6 @@ class MataKuliahController extends BaseController
             $data->kode_mk = $updateMataKuliahRequest->kode_mk;
             $data->mata_kuliah = $updateMataKuliahRequest->mata_kuliah;
             $data->sks = $updateMataKuliahRequest->sks;
-            $data->kelas = $updateMataKuliahRequest->kelas;
-            $data->semester = $updateMataKuliahRequest->semester;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);

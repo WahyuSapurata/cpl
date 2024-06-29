@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ik_dengan_cpmks', function (Blueprint $table) {
+        Schema::create('cpmks', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
             $table->uuid('uuid_user');
             $table->uuid('uuid_matkul');
+            $table->uuid('uuid_cpl');
             $table->string('kode_cpmk');
             $table->text('deskripsi');
             $table->string('bobot');
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ik_dengan_cpmks');
+        Schema::dropIfExists('cpmks');
     }
 };

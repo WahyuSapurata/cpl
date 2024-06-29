@@ -6,18 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Uuid;
 
-class IndikatorKinerja extends Model
+class Mahasiswa extends Model
 {
     use HasFactory;
 
-    protected $table = 'indikator_kinerjas';
+    protected $table = 'mahasiswas';
     protected $primaryKey = 'id';
     protected $fillable = [
         'uuid',
-        'kode_ik',
-        'kemampuan',
-        'deskripsi',
-        'bobot',
+        'nim',
+        'nama',
     ];
 
     protected static function boot()

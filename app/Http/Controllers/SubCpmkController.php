@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSubCpmkRequest;
 use App\Http\Requests\UpdateSubCpmkRequest;
+use App\Models\Cpmk;
 use App\Models\IkDenganCpmk;
 use App\Models\MataKuliah;
 use App\Models\SubCpmk;
@@ -14,36 +15,25 @@ class SubCpmkController extends BaseController
     public function index()
     {
         $module = 'Sub CPMK';
+        return view('dosen.subcpmk.index', compact('module'));
+    }
+
+    public function operator()
+    {
+        $module = 'Sub CPMK';
         return view('operator.subcpmk.index', compact('module'));
     }
 
-    public function matkulcpmk($params)
-    {
-        $module = 'Mata Kuliah Sub CPMK';
-        $matkul = MataKuliah::where('semester', $params)->get();
-        return view('operator.subcpmk.matkul', compact('module', 'matkul'));
-    }
-
-    public function subcpmk($params)
-    {
-        $this->get_sub_cpmk($params);
-        $data_matkul = MataKuliah::where('uuid', $params)->first();
-        $module = 'Data Sub CPMK ' . $data_matkul->mata_kuliah;
-        return view('operator.subcpmk.subcpmk', compact('module'));
-    }
-
-    public function get_sub_cpmk($params)
+    public function get($params)
     {
         // Mengambil semua data sub cpmk
         $dataFull = SubCpmk::where('uuid_matkul', $params)->get();
 
         $combinedData = $dataFull->map(function ($item) {
             $dataUser = User::where('uuid', $item->uuid_user)->first();
-            $dataMatkul = MataKuliah::where('uuid', $item->uuid_matkul)->first();
-            $dataCpmk = IkDenganCpmk::where('uuid', $item->uuid_cpmk)->first();
+            $dataCpmk = Cpmk::where('uuid', $item->uuid_cpmk)->first();
 
             $item->role = $dataUser->role ?? null;
-            $item->matkul = $dataMatkul->mata_kuliah ?? null;
             $item->kode_cpmk = $dataCpmk->kode_cpmk ?? null;
             return $item;
         });
@@ -63,7 +53,6 @@ class SubCpmkController extends BaseController
         return $this->sendResponse($dataCombine, 'Get data success');
     }
 
-
     public function store(StoreSubCpmkRequest $storeSubCpmkRequest)
     {
         $data = array();
@@ -76,7 +65,6 @@ class SubCpmkController extends BaseController
             $data->deskripsi = $storeSubCpmkRequest->deskripsi;
             $data->teknik_penilaian = $storeSubCpmkRequest->teknik_penilaian;
             $data->bobot = $storeSubCpmkRequest->bobot;
-            $data->nilai_sub = $storeSubCpmkRequest->nilai_sub;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);
@@ -106,7 +94,6 @@ class SubCpmkController extends BaseController
             $data->deskripsi = $storeSubCpmkRequest->deskripsi;
             $data->teknik_penilaian = $storeSubCpmkRequest->teknik_penilaian;
             $data->bobot = $storeSubCpmkRequest->bobot;
-            $data->nilai_sub = $storeSubCpmkRequest->nilai_sub;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);

@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreIkDenganCpmkRequest extends FormRequest
+class UpdateMahasiswaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,18 +22,7 @@ class StoreIkDenganCpmkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'kode_cpmk' => 'required',
-            'deskripsi' => 'required',
-            'bobot' => 'required',
-        ];
-    }
-
-    public function messages()
-    {
-        return [
-            'kode_cpmk.required' => 'Kolom kode cpmk harus di isi.',
-            'deskripsi.required' => 'Kolom deskripsi harus di isi.',
-            'bobot.required' => 'Kolom bobot harus di isi.',
+            //
         ];
     }
 }

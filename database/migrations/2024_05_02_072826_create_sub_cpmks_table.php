@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('deskripsi');
             $table->string('teknik_penilaian');
             $table->string('bobot');
-            $table->string('nilai_sub');
             $table->timestamps();
         });
     }

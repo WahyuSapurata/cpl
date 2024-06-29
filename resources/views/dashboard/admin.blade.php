@@ -1,22 +1,29 @@
 @extends('layouts.layout')
-@section('button')
-    <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
-        <!--begin::Page title-->
-        <div data-kt-swapper="true" data-kt-swapper-mode="prepend"
-            data-kt-swapper-parent="{default: '#kt_content_container', 'lg': '#kt_toolbar_container'}"
-            class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
-            <!--begin::Title-->
-            <select name="mata_kuliah" class="form-select" data-control="select2" id="mata_kuliah_select"
-                data-placeholder="Pilih mata kuliah">
-            </select>
-            <!--end::Title-->
-        </div>
-    </div>
-@endsection
 @section('content')
     <div class="post d-flex flex-column-fluid" id="kt_post">
         <!--begin::Container-->
         <div id="kt_content_container" class="container">
+
+            <form class="row p-8 bg-white rounded-2 mb-5">
+                <div class="col-md-5">
+                    <label class="form-label">Mata Kuliah</label>
+                    <select name="uuid_matkul" class="form-select" data-control="select2" id="from_select_matkul"
+                        data-placeholder="Pilih jenis inputan">
+                    </select>
+                    <small class="text-danger uuid_matkul_error"></small>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">Tahun Ajaran</label>
+                    <select name="tahun_ajaran" class="form-select" data-control="select2" id="from_select_tahun_ajaran"
+                        data-placeholder="Pilih">
+                    </select>
+                    <small class="text-danger tahun_ajaran_error"></small>
+                </div>
+                <div class="col-md-2 d-flex justify-content-center align-items-center">
+                    <button class="btn btn-primary btn-sm " id="button-cari"></i>Cari Data</button>
+                </div>
+            </form>
+
             <div class="row">
                 <div id="noData" class="d-grid justify-content-center gap-5" style="justify-items: center">
                     <svg xmlns="http://www.w3.org/2000/svg" height="20em"
@@ -58,126 +65,130 @@
         <!--end::Container-->
     </div>
 @endsection
-@section('script')
+{{-- @section('script')
     <script>
-        $(document).ready(async function() {
-            // Menampilkan elemen loading
+        let control = new Control();
 
-            var myChart; // Deklarasikan variabel di luar fungsi
+        const generateSchoolYears = (startYear) => {
+            const currentYear = new Date().getFullYear();
+            const years = [];
 
-            try {
-                // Melakukan permintaan AJAX pertama
-                const res = await $.ajax({
-                    url: '/operator/get-mata-kuliah',
-                    method: 'GET'
+            for (let year = startYear; year <= currentYear; year++) {
+                years.push({
+                    text: `${year}/${year + 1}`
                 });
-
-                if (res.success === true) {
-                    // Mengosongkan dan mengisi opsi mata_kuliah_select
-                    $('#mata_kuliah_select').html("");
-                    let html = "<option></option>";
-                    $.each(res.data, function(x, y) {
-                        html += `<option value="${y.uuid}">${y.mata_kuliah}</option>`;
-                    });
-                    $('#mata_kuliah_select').html(html);
-
-                    // Menanggapi perubahan pada elemen select
-                    $('#mata_kuliah_select').on('change', async function() {
-                        $('#noData').addClass('d-none');
-                        let selectedUuid = $(this).val();
-
-                        try {
-                            // Melakukan permintaan AJAX kedua
-                            const response = await $.ajax({
-                                url: '/dosen/get-nilaicpl/' + selectedUuid,
-                                method: 'GET'
-                            });
-
-                            if (response.success === true) {
-                                if (response.data.length > 0) {
-                                    $('.loading').show();
-                                    console.log(response.data);
-                                    getGrafik(response.data);
-                                } else {
-                                    // Data kosong, kosongkan grafik atau lakukan sesuatu yang sesuai
-                                    clearGrafik();
-                                }
-                            } else {
-                                console.error('Gagal mengambil data:', response.message);
-                            }
-                        } catch (error) {
-                            console.error('Gagal melakukan permintaan AJAX kedua:', error);
-                        } finally {
-                            // Menyembunyikan elemen loading setelah permintaan AJAX selesai
-                            $('.loading').hide();
-                        }
-                    });
-
-                } else {
-                    console.error('Gagal mengambil data:', res.message);
-                }
-            } catch (error) {
-                console.error('Gagal melakukan permintaan AJAX pertama:', error);
             }
 
-            function getGrafik(data) {
-                $('#onData').removeClass('d-none');
-                $('#noGrafik').addClass('d-none');
-                var ctx = document.getElementById('kt_chartjs');
-                var primaryColor = KTUtil.getCssVariableValue('--bs-success');
-                var fontFamily = KTUtil.getCssVariableValue('--bs-font-sans-serif');
+            // Balik urutan tahun agar tahun sekarang berada di paling atas
+            years.reverse();
 
-                var labels = [];
-                var jumlahData = [];
+            return years;
+        };
 
-                data.forEach(function(item) {
-                    labels.push(item.kode_cpl);
-                    jumlahData.push(item.nilai_cpl);
-                });
+        const data = generateSchoolYears(2000);
 
-                // Chart data
-                const chartData = {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Nilai CPL',
-                        backgroundColor: primaryColor,
-                        borderColor: primaryColor,
-                        data: jumlahData,
-                    }]
+        $(function() {
+            control.push_select_mk('/dosen/get-matkul-by-user', '#from_select_matkul');
+            control.push_select_data(data, '#from_select_tahun_ajaran');
+        });
+
+        $(document).ready(function() {
+            $(document).on('click', '#button-cari', function(e) {
+                e.preventDefault(); // Menghentikan pengiriman form standar
+                $('#noData').addClass('d-none');
+
+                const matkul = $('#from_select_matkul').val();
+                const tahun_ajaran = $('#from_select_tahun_ajaran').val();
+
+                const data = {
+                    'matkul': matkul,
+                    'tahun_ajaran': tahun_ajaran
                 };
 
-                // Chart config
-                const config = {
-                    type: 'bar',
-                    data: chartData,
-                    options: {
-                        plugins: {
-                            title: {
-                                display: false
-                            }
-                        },
-                        responsive: true,
-                        defaults: {
-                            global: {
-                                defaultFont: fontFamily
-                            }
+                $.ajax({
+                    url: `/dosen/get-nilai-cpl-user`,
+                    method: 'GET',
+                    data: data,
+                    beforeSend: function() {
+                        $('.loading').show();
+                    },
+                    success: function(response) {
+                        if (response.data && Object.keys(response.data).length > 0) {
+                            getGrafik(response.data);
+                        } else {
+                            // Data kosong, kosongkan grafik atau lakukan sesuatu yang sesuai
+                            clearGrafik();
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    },
+                    complete: function() {
+                        // Menyembunyikan elemen loading setelah permintaan AJAX selesai
+                        $('.loading').hide();
+                    }
+                });
+            });
+        });
+
+        function getGrafik(data) {
+            $('#onData').removeClass('d-none');
+            $('#noGrafik').addClass('d-none');
+            var ctx = document.getElementById('kt_chartjs').getContext('2d');
+            var primaryColor = KTUtil.getCssVariableValue('--bs-success');
+            var fontFamily = KTUtil.getCssVariableValue('--bs-font-sans-serif');
+
+            var labels = [];
+            var jumlahData = [];
+
+            // Mengiterasi objek data
+            for (const [key, value] of Object.entries(data)) {
+                labels.push(key);
+                jumlahData.push(value);
+            }
+
+            // Chart data
+            const chartData = {
+                labels: labels,
+                datasets: [{
+                    label: 'Nilai CPL',
+                    backgroundColor: primaryColor,
+                    borderColor: primaryColor,
+                    data: jumlahData,
+                }]
+            };
+
+            // Chart config
+            const config = {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    plugins: {
+                        title: {
+                            display: false
+                        }
+                    },
+                    responsive: true,
+                    defaults: {
+                        global: {
+                            defaultFont: fontFamily
                         }
                     }
-                };
-
-                // Destroy existing chart if it exists
-                if (myChart) {
-                    myChart.destroy();
                 }
+            };
 
-                // Create new ChartJS instance
-                myChart = new Chart(ctx, config);
+            // Destroy existing chart if it exists
+            if (window.myChart) {
+                window.myChart.destroy();
             }
 
-            function clearGrafik() {
-                $('#noGrafik').removeClass('d-none');
-                $('#onData').addClass('d-none');
-            }
-        });
+            // Create new ChartJS instance
+            window.myChart = new Chart(ctx, config);
+        }
+
+        function clearGrafik() {
+            $('#noGrafik').removeClass('d-none');
+            $('#onData').addClass('d-none');
+        }
     </script>
-@endsection
+@endsection --}}

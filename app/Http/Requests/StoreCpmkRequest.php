@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreSubCpmkRequest extends FormRequest
+class StoreCpmkRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,9 @@ class StoreSubCpmkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'uuid_cpmk' => 'required',
-            'nama_sub' => 'required',
+            'uuid_cpl' => 'required',
+            'kode_cpmk' => 'required',
             'deskripsi' => 'required',
-            'teknik_penilaian' => 'required',
             'bobot' => 'required',
         ];
     }
@@ -33,10 +32,9 @@ class StoreSubCpmkRequest extends FormRequest
     public function messages()
     {
         return [
-            'uuid_cpmk.required' => 'Kolom cpmk harus di isi.',
-            'nama_sub.required' => 'Kolom nama sub harus di isi.',
+            'uuid_cpl.required' => 'Kolom cpl harus di isi.',
+            'kode_cpmk.required' => 'Kolom kode cpmk harus di isi.',
             'deskripsi.required' => 'Kolom deskripsi harus di isi.',
-            'teknik_penilaian.required' => 'Kolom teknik penilaian harus di isi.',
             'bobot.required' => 'Kolom bobot harus di isi.',
         ];
     }

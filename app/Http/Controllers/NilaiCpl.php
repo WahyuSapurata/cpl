@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\CplDenganIk;
 use App\Models\CplProdi;
+use App\Models\Cpmk;
 use App\Models\IkDenganCpmk;
 use App\Models\IndikatorKinerja;
+use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Nilai;
+use App\Models\Penilaian;
 use App\Models\SubCpmk;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -16,110 +19,176 @@ class NilaiCpl extends BaseController
 {
     public function index()
     {
-        $module = 'Perhitungan CPL';
+        $module = 'Nilai CPL';
         return view('dosen.nilaicpl.index', compact('module'));
     }
 
-    public function get($params)
+    public function operator()
     {
-        // Mengambil semua data pengguna
-        $dataFull = Nilai::all();
-
-        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur' || auth()->user()->role === 'lpm' || auth()->user()->role === 'admin') {
-            $dataCombine = $dataFull->where('uuid_mk', $params)->values();
-        } else {
-            $dataCombine = $dataFull->where('uuid_user', auth()->user()->uuid)->where('uuid_mk', $params)->values();
-        }
-
-        // Mengambil semua data CPL yang sesuai dengan UUID yang ada dalam data nilai
-        $cplIds = $dataCombine->pluck('uuid_cpl')->unique(); // Ambil UUID CPL yang unik dari data nilai
-        $cpl = CplProdi::whereIn('uuid', $cplIds)->get(); // Ambil data CPL yang sesuai dengan UUID yang ada dalam data nilai
-
-        $combanedCpl = $cpl->map(function ($item) use ($dataCombine) {
-            $combinedData = $dataCombine->map(function ($itemCpl) {
-                $dataIk = IndikatorKinerja::where('uuid', $itemCpl->uuid_ik)->first();
-                $dataCpmk = IkDenganCpmk::where('uuid', $itemCpl->uuid_cpmk)->first();
-                $dataSubCpmk = SubCpmk::where('uuid_cpmk', $dataCpmk->uuid)->get();
-                $nilai = 0;
-                $bobot = 0;
-                foreach ($dataSubCpmk as $itemsub) {
-                    $nilai += $itemsub->nilai_sub;
-                    $bobot += $itemsub->bobot / 100;
-                }
-                $itemCpl->bobot_ik = $dataIk->bobot;
-                $itemCpl->bobot_cpmk = $dataCpmk->bobot;
-                $itemCpl->nilai = $nilai * $bobot;
-                return $itemCpl;
-            });
-            $combinedDatas = $combinedData->where('uuid_cpl', $item->uuid)->values();
-
-            $nilaiIk = 0;
-            $bobotIk = 0;
-            foreach ($combinedDatas as $row) {
-                // $nilaiIk += $row->nilai * $row->bobot_cpmk / $row->bobot_cpmk * $row->bobot_ik;
-                $nilaiIk += ($row->nilai * $row->bobot_cpmk) / $row->bobot_ik;
-                $bobotIk += $row->bobot_ik;
-            }
-
-            $item->nilai_ik = $nilaiIk;
-            $item->bobot_ik = $bobotIk;
-            $item->nilai_cpl = $nilaiIk / $bobotIk;
-            return $item;
-        });
-
-        return $this->sendResponse($combanedCpl, 'Get data success');
+        $module = 'Nilai CPL';
+        return view('operator.nilaicpl.index', compact('module'));
     }
 
-    public function extract_pdf($params)
+    public function get(Request $request)
     {
-        $mata_kuliah = MataKuliah::where('uuid', $params)->first();
-        // Mengambil semua data pengguna
-        $dataFull = Nilai::all();
+        // Mendapatkan tahun ajaran dari permintaan
+        $tahun_ajaran = $request->tahun_ajaran;
 
-        if (auth()->user()->role === 'operator' || auth()->user()->role === 'kajur' || auth()->user()->role === 'lpm' || auth()->user()->role === 'admin') {
-            $dataCombine = $dataFull->where('uuid_mk', $params)->values();
-        } else {
-            $dataCombine = $dataFull->where('uuid_user', auth()->user()->uuid)->where('uuid_mk', $params)->values();
+        // Mengambil data CPMK berdasarkan uuid_matkul dari request
+        $cpmk = Cpmk::where('uuid_matkul', $request->matkul)->get();
+
+        // Mengambil UUID CPL dari CPMK
+        $cplUuids = $cpmk->pluck('uuid_cpl');
+
+        // Mengambil data CPL berdasarkan UUID yang ditemukan
+        $cpl = CplProdi::whereIn('uuid', $cplUuids)->get();
+
+        // Mengambil UUID CPMK untuk query SubCpmk
+        $cpmkUuids = $cpmk->pluck('uuid');
+
+        // Mengambil data SubCpmk berdasarkan UUID CPMK yang ditemukan
+        $subCpmks = SubCpmk::whereIn('uuid_cpmk', $cpmkUuids)->get();
+
+        // Mengambil UUID SubCpmk untuk query Penilaian
+        $subCpmkUuids = $subCpmks->pluck('uuid');
+
+        // Mengambil data penilaian yang sesuai dengan UUID SubCpmk dan tahun ajaran
+        $penilaian = Penilaian::whereIn('uuid_sub_cpmks', $subCpmkUuids)
+            ->where('tahun_ajaran', $tahun_ajaran)
+            ->get()
+            ->groupBy('uuid_mahasiswa');
+
+        // Inisialisasi array untuk menyimpan hasil penjumlahan
+        $summedData = [];
+
+        // Iterasi melalui koleksi $penilaian yang dikelompokkan berdasarkan uuid_mahasiswa
+        foreach ($penilaian as $uuidMahasiswa => $penilaianForMahasiswa) {
+            $mahasiswa = Mahasiswa::where('uuid', $uuidMahasiswa)->first();
+            $namaMahasiswa = $mahasiswa ? $mahasiswa->nama : null;
+
+            $summedData[$uuidMahasiswa] = [
+                'nama_mahasiswa' => $namaMahasiswa,
+            ];
+
+            // Iterasi melalui penilaian mahasiswa untuk menjumlahkan nilai berdasarkan CPL
+            foreach ($penilaianForMahasiswa as $item) {
+                $subCpmk = $subCpmks->where('uuid', $item->uuid_sub_cpmks)->first();
+                if ($subCpmk) {
+                    $dataCpmk = $cpmk->where('uuid', $subCpmk->uuid_cpmk)->first();
+                    $dataCpl = $cpl->where('uuid', $dataCpmk->uuid_cpl)->first();
+                    $kodeCpl = $dataCpl ? $dataCpl->kode_cpl : null;
+
+                    // Jika kode CPL ada, tambahkan nilai ke hasil penjumlahan
+                    if ($kodeCpl) {
+                        if (!isset($summedData[$uuidMahasiswa][$kodeCpl])) {
+                            $summedData[$uuidMahasiswa][$kodeCpl] = 0;
+                        }
+                        $summedData[$uuidMahasiswa][$kodeCpl] += $item->nilai * ($subCpmk->bobot / 100);
+                    }
+                }
+            }
         }
 
-        // Mengambil semua data CPL yang sesuai dengan UUID yang ada dalam data nilai
-        $cplIds = $dataCombine->pluck('uuid_cpl')->unique(); // Ambil UUID CPL yang unik dari data nilai
-        $cpl = CplProdi::whereIn('uuid', $cplIds)->get(); // Ambil data CPL yang sesuai dengan UUID yang ada dalam data nilai
-
-        $combanedCpl = $cpl->map(function ($item) use ($dataCombine) {
-            $combinedData = $dataCombine->map(function ($itemCpl) {
-                $dataIk = IndikatorKinerja::where('uuid', $itemCpl->uuid_ik)->first();
-                $dataCpmk = IkDenganCpmk::where('uuid', $itemCpl->uuid_cpmk)->first();
-                $dataSubCpmk = SubCpmk::where('uuid_cpmk', $dataCpmk->uuid)->get();
-                $nilai = 0;
-                $bobot = 0;
-                foreach ($dataSubCpmk as $itemsub) {
-                    $nilai += $itemsub->nilai_sub;
-                    $bobot += $itemsub->bobot / 100;
+        // Menambahkan kode_cpl yang belum ada di penilaian dengan nilai null
+        foreach ($summedData as &$item) {
+            foreach ($cpl as $dataCpl) {
+                $kodeCpl = $dataCpl->kode_cpl;
+                if (!isset($item[$kodeCpl])) {
+                    $item[$kodeCpl] = null;
                 }
-                $itemCpl->bobot_ik = $dataIk->bobot;
-                $itemCpl->bobot_cpmk = $dataCpmk->bobot;
-                $itemCpl->nilai = $nilai * $bobot;
-                return $itemCpl;
-            });
-            $combinedDatas = $combinedData->where('uuid_cpl', $item->uuid)->values();
-
-            $nilaiIk = 0;
-            $bobotIk = 0;
-            foreach ($combinedDatas as $row) {
-                // $nilaiIk += $row->nilai * $row->bobot_cpmk / $row->bobot_cpmk * $row->bobot_ik;
-                $nilaiIk += ($row->nilai * $row->bobot_cpmk) / $row->bobot_ik;
-                $bobotIk += $row->bobot_ik;
             }
+        }
 
-            $item->nilai_ik = $nilaiIk;
-            $item->bobot_ik = $bobotIk;
-            $item->nilai_cpl = $nilaiIk / $bobotIk;
-            return $item;
-        });
-        // return view('operator.pdf.index', compact('mata_kuliah', 'combanedCpl'));
-        $data = ['title' => 'Welcome to Laravel PDF!'];
-        $pdf = Pdf::loadView('operator.pdf.index', compact('mata_kuliah', 'combanedCpl'));
+        // Mengubah array $summedData menjadi array kembali
+        $summedData = array_values($summedData);
+
+        return $this->sendResponse([
+            'data' => $summedData, // Menggabungkan hasil ke dalam satu array
+            'kode_cpl' => $cpl->pluck('kode_cpl')->unique()->values(),
+        ], 'Get data success');
+    }
+
+    public function extract_pdf(Request $request)
+    {
+        $params = $request->query('data');
+        $dataParams = json_decode($params, true);
+        // Mendapatkan tahun ajaran dari permintaan
+        $tahun_ajaran = $dataParams['tahun_ajaran'];
+
+        // Mengambil data CPMK berdasarkan uuid_matkul dari dataParams
+        $cpmk = Cpmk::where('uuid_matkul', $dataParams['matkul'])->get();
+
+        // Mengambil UUID CPL dari CPMK
+        $cplUuids = $cpmk->pluck('uuid_cpl');
+
+        // Mengambil data CPL berdasarkan UUID yang ditemukan
+        $cpl = CplProdi::whereIn('uuid', $cplUuids)->get();
+
+        // Mengambil UUID CPMK untuk query SubCpmk
+        $cpmkUuids = $cpmk->pluck('uuid');
+
+        // Mengambil data SubCpmk berdasarkan UUID CPMK yang ditemukan
+        $subCpmks = SubCpmk::whereIn('uuid_cpmk', $cpmkUuids)->get();
+
+        // Mengambil UUID SubCpmk untuk query Penilaian
+        $subCpmkUuids = $subCpmks->pluck('uuid');
+
+        // Mengambil data penilaian yang sesuai dengan UUID SubCpmk dan tahun ajaran
+        $penilaian = Penilaian::whereIn('uuid_sub_cpmks', $subCpmkUuids)
+            ->where('tahun_ajaran', $tahun_ajaran)
+            ->get()
+            ->groupBy('uuid_mahasiswa');
+
+        // Inisialisasi array untuk menyimpan hasil penjumlahan
+        $summedData = [];
+
+        // Iterasi melalui koleksi $penilaian yang dikelompokkan berdasarkan uuid_mahasiswa
+        foreach ($penilaian as $uuidMahasiswa => $penilaianForMahasiswa) {
+            $mahasiswa = Mahasiswa::where('uuid', $uuidMahasiswa)->first();
+            $namaMahasiswa = $mahasiswa ? $mahasiswa->nama : null;
+
+            $summedData[$uuidMahasiswa] = [
+                'nama_mahasiswa' => $namaMahasiswa,
+            ];
+
+            // Iterasi melalui penilaian mahasiswa untuk menjumlahkan nilai berdasarkan CPL
+            foreach ($penilaianForMahasiswa as $item) {
+                $subCpmk = $subCpmks->where('uuid', $item->uuid_sub_cpmks)->first();
+                if ($subCpmk) {
+                    $dataCpmk = $cpmk->where('uuid', $subCpmk->uuid_cpmk)->first();
+                    $dataCpl = $cpl->where('uuid', $dataCpmk->uuid_cpl)->first();
+                    $kodeCpl = $dataCpl ? $dataCpl->kode_cpl : null;
+
+                    // Jika kode CPL ada, tambahkan nilai ke hasil penjumlahan
+                    if ($kodeCpl) {
+                        if (!isset($summedData[$uuidMahasiswa][$kodeCpl])) {
+                            $summedData[$uuidMahasiswa][$kodeCpl] = 0;
+                        }
+                        $summedData[$uuidMahasiswa][$kodeCpl] += $item->nilai * ($subCpmk->bobot / 100);
+                    }
+                }
+            }
+        }
+
+        // Menambahkan kode_cpl yang belum ada di penilaian dengan nilai null
+        foreach ($summedData as &$item) {
+            foreach ($cpl as $dataCpl) {
+                $kodeCpl = $dataCpl->kode_cpl;
+                if (!isset($item[$kodeCpl])) {
+                    $item[$kodeCpl] = null;
+                }
+            }
+        }
+
+        // Mengubah array $summedData menjadi array kembali
+        $summedData = array_values($summedData);
+        $data = [
+            'data' => $summedData, // Menggabungkan hasil ke dalam satu array
+            'kode_cpl' => $cpl->pluck('kode_cpl')->unique()->values(),
+        ];
+        // return view('operator.pdf.index', compact('data'));
+        // $data = ['title' => 'Welcome to Laravel PDF!'];
+        $pdf = Pdf::loadView('operator.pdf.index', compact('data'));
 
         return $pdf->stream('CPL.pdf');
     }

@@ -6,16 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Uuid;
 
-class CplDenganIk extends Model
+class Cpmk extends Model
 {
     use HasFactory;
 
-    protected $table = 'cpl_dengan_iks';
+    protected $table = 'cpmks';
     protected $primaryKey = 'id';
     protected $fillable = [
         'uuid',
+        'uuid_user',
+        'uuid_matkul',
         'uuid_cpl',
-        'uuid_ik',
+        'kode_cpmk',
+        'deskripsi',
+        'bobot',
     ];
 
     protected static function boot()

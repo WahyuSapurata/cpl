@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('kode_mk');
             $table->string('mata_kuliah');
             $table->string('sks');
-            $table->string('kelas');
-            $table->string('semester');
             $table->timestamps();
         });
     }

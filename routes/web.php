@@ -83,19 +83,28 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::group(['prefix' => 'operator', 'middleware' => ['auth'], 'as' => 'operator.'], function () {
         Route::get('/dashboard-operator', 'Dashboard@dashboard_operator')->name('dashboard-operator');
 
-        Route::get('/data-dosen', 'DataDosen@index')->name('data-dosen');
-        Route::get('/get-data-dosen', 'DataDosen@get')->name('get-data-dosen');
-        Route::get('/show-data-dosen/{params}', 'DataDosen@show')->name('show-data-dosen');
-        Route::post('/add-data-dosen', 'DataDosen@store')->name('add-data-dosen');
-        Route::post('/update-data-dosen/{params}', 'DataDosen@update')->name('update-data-dosen');
-        Route::delete('/delete-data-dosen/{params}', 'DataDosen@delete')->name('delete-data-dosen');
+        Route::prefix('data-master')->group(function () {
+            Route::get('/data-dosen', 'DataDosen@index')->name('data-dosen');
+            Route::get('/get-data-dosen', 'DataDosen@get')->name('get-data-dosen');
+            Route::get('/show-data-dosen/{params}', 'DataDosen@show')->name('show-data-dosen');
+            Route::post('/add-data-dosen', 'DataDosen@store')->name('add-data-dosen');
+            Route::post('/update-data-dosen/{params}', 'DataDosen@update')->name('update-data-dosen');
+            Route::delete('/delete-data-dosen/{params}', 'DataDosen@delete')->name('delete-data-dosen');
 
-        Route::get('/mata-kuliah', 'MataKuliahController@index')->name('mata-kuliah');
-        Route::get('/get-mata-kuliah', 'MataKuliahController@get')->name('get-mata-kuliah');
-        Route::get('/show-mata-kuliah/{params}', 'MataKuliahController@show')->name('show-mata-kuliah');
-        Route::post('/add-mata-kuliah', 'MataKuliahController@store')->name('add-mata-kuliah');
-        Route::post('/update-mata-kuliah/{params}', 'MataKuliahController@update')->name('update-mata-kuliah');
-        Route::delete('/delete-mata-kuliah/{params}', 'MataKuliahController@delete')->name('delete-mata-kuliah');
+            Route::get('/mata-kuliah', 'MataKuliahController@index')->name('mata-kuliah');
+            Route::get('/get-mata-kuliah', 'MataKuliahController@get')->name('get-mata-kuliah');
+            Route::get('/show-mata-kuliah/{params}', 'MataKuliahController@show')->name('show-mata-kuliah');
+            Route::post('/add-mata-kuliah', 'MataKuliahController@store')->name('add-mata-kuliah');
+            Route::post('/update-mata-kuliah/{params}', 'MataKuliahController@update')->name('update-mata-kuliah');
+            Route::delete('/delete-mata-kuliah/{params}', 'MataKuliahController@delete')->name('delete-mata-kuliah');
+
+            Route::get('/mahasiswa', 'MahasiswaController@index')->name('mahasiswa');
+            Route::get('/get-mahasiswa', 'MahasiswaController@get')->name('get-mahasiswa');
+            Route::get('/show-mahasiswa/{params}', 'MahasiswaController@show')->name('show-mahasiswa');
+            Route::post('/add-mahasiswa', 'MahasiswaController@store')->name('add-mahasiswa');
+            Route::post('/update-mahasiswa/{params}', 'MahasiswaController@update')->name('update-mahasiswa');
+            Route::delete('/delete-mahasiswa/{params}', 'MahasiswaController@delete')->name('delete-mahasiswa');
+        });
 
         Route::get('/cpl', 'CplProdiController@index')->name('cpl');
         Route::get('/get-cpl', 'CplProdiController@get')->name('get-cpl');
@@ -104,41 +113,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/update-cpl/{params}', 'CplProdiController@update')->name('update-cpl');
         Route::delete('/delete-cpl/{params}', 'CplProdiController@delete')->name('delete-cpl');
 
-        Route::get('/indikator-kinerja', 'IndikatorKinerjaController@index')->name('indikator-kinerja');
-        Route::get('/get-indikator-kinerja', 'IndikatorKinerjaController@get')->name('get-indikator-kinerja');
-        Route::get('/show-indikator-kinerja/{params}', 'IndikatorKinerjaController@show')->name('show-indikator-kinerja');
-        Route::post('/add-indikator-kinerja', 'IndikatorKinerjaController@store')->name('add-indikator-kinerja');
-        Route::post('/update-indikator-kinerja/{params}', 'IndikatorKinerjaController@update')->name('update-indikator-kinerja');
-        Route::delete('/delete-indikator-kinerja/{params}', 'IndikatorKinerjaController@delete')->name('delete-indikator-kinerja');
+        Route::get('/cpmk', 'CpmkController@operator')->name('cpmk');
+        Route::get('/subcpmk', 'SubCpmkController@operator')->name('subcpmk');
 
-        // Route::get('/cpldenganik', 'CplDenganIkController@index')->name('cpldenganik');
-        // Route::get('/get-cpldenganik', 'CplDenganIkController@get')->name('get-cpldenganik');
-        // Route::get('/show-cpldenganik/{params}', 'CplDenganIkController@show')->name('show-cpldenganik');
-        // Route::post('/add-cpldenganik', 'CplDenganIkController@store')->name('add-cpldenganik');
-        // Route::post('/update-cpldenganik/{params}', 'CplDenganIkController@update')->name('update-cpldenganik');
-        // Route::delete('/delete-cpldenganik/{params}', 'CplDenganIkController@delete')->name('delete-cpldenganik');
-
-        Route::get('/ikdengancpmk', 'IkDenganCpmkController@index')->name('ikdengancpmk');
-        Route::get('/get-ikdengancpmk', 'IkDenganCpmkController@get')->name('get-ikdengancpmk');
-        Route::get('/get-cpmk/{params}', 'IkDenganCpmkController@get_cpmk')->name('get-cpmk');
-        Route::get('/show-ikdengancpmk/{params}', 'IkDenganCpmkController@show')->name('show-ikdengancpmk');
-        Route::post('/add-ikdengancpmk', 'IkDenganCpmkController@store')->name('add-ikdengancpmk');
-        Route::post('/update-ikdengancpmk/{params}', 'IkDenganCpmkController@update')->name('update-ikdengancpmk');
-        Route::delete('/delete-ikdengancpmk/{params}', 'IkDenganCpmkController@delete')->name('delete-ikdengancpmk');
-
-        Route::get('/subcpmk', 'SubCpmkController@index')->name('subcpmk');
-        Route::get('/matkulsubcpmk/{params}', 'SubCpmkController@matkulcpmk')->name('matkulsubcpmk');
-        Route::get('/subcpmk/{params}', 'SubCpmkController@subcpmk')->name('subcpmk');
-        Route::get('/get-subcpmk/{params}', 'SubCpmkController@get_sub_cpmk')->name('get-subcpmk');
-        Route::get('/show-subcpmk/{params}', 'SubCpmkController@show')->name('show-subcpmk');
-        Route::post('/add-subcpmk', 'SubCpmkController@store')->name('add-subcpmk');
-        Route::post('/update-subcpmk/{params}', 'SubCpmkController@update')->name('update-subcpmk');
-        Route::delete('/delete-subcpmk/{params}', 'SubCpmkController@delete')->name('delete-subcpmk');
-
-        Route::get('/matkulcpmk/{params}', 'IkDenganCpmkController@matkulcpmk')->name('matkulcpmk');
-        Route::get('/cpmk/{params}', 'IkDenganCpmkController@cpmk')->name('cpmk');
-
-        Route::get('/nilaicpl', 'NilaiCpl@index')->name('nilaicpl');
+        Route::get('/nilaicpl', 'NilaiCpl@operator')->name('nilaicpl');
         Route::get('/nilai', 'NilaiController@index')->name('nilai');
 
         Route::get('/extract-pdf/{params}', 'NilaiCpl@extract_pdf')->name('extract-pdf');
@@ -166,18 +144,40 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
     Route::group(['prefix' => 'dosen', 'middleware' => ['auth'], 'as' => 'dosen.'], function () {
         Route::get('/dashboard-dosen', 'Dashboard@dashboard_dosen')->name('dashboard-dosen');
+        Route::get('/get-nilai-cpl-user', 'Dashboard@get_nilai_cpl_user')->name('get-nilai-cpl-user');
 
-        Route::get('/ikdengancpmk', 'IkDenganCpmkController@index')->name('ikdengancpmk');
+        Route::get('/cpmk', 'CpmkController@index')->name('cpmk');
+        Route::get('/get-cpmk', 'CpmkController@get')->name('get-cpmk');
+        Route::get('/get-cpmk-by-uuid-matkul/{params}', 'CpmkController@get_cpmk_by_uuid_matkul')->name('get-cpmk-by-uuid-matkul');
+        Route::get('/show-cpmk/{params}', 'CpmkController@show')->name('show-cpmk');
+        Route::post('/add-cpmk', 'CpmkController@store')->name('add-cpmk');
+        Route::post('/update-cpmk/{params}', 'CpmkController@update')->name('update-cpmk');
+        Route::delete('/delete-cpmk/{params}', 'CpmkController@delete')->name('delete-cpmk');
 
-        Route::get('/nilai', 'NilaiController@index')->name('nilai');
-        Route::get('/get-nilai/{params}', 'NilaiController@get')->name('get-nilai');
-        Route::get('/show-nilai/{params}', 'NilaiController@show')->name('show-nilai');
-        Route::post('/add-nilai', 'NilaiController@store')->name('add-nilai');
-        Route::post('/update-nilai/{params}', 'NilaiController@update')->name('update-nilai');
-        Route::delete('/delete-nilai/{params}', 'NilaiController@delete')->name('delete-nilai');
+        Route::get('/subcpmk', 'SubCpmkController@index')->name('subcpmk');
+        Route::get('/get-subcpmk/{params}', 'SubCpmkController@get')->name('get-subcpmk');
+        Route::get('/show-subcpmk/{params}', 'SubCpmkController@show')->name('show-subcpmk');
+        Route::post('/add-subcpmk', 'SubCpmkController@store')->name('add-subcpmk');
+        Route::post('/update-subcpmk/{params}', 'SubCpmkController@update')->name('update-subcpmk');
+        Route::delete('/delete-subcpmk/{params}', 'SubCpmkController@delete')->name('delete-subcpmk');
+
+        Route::get('/penilaian', 'PenilaianController@index')->name('penilaian');
+        Route::get('/get-penilaian', 'PenilaianController@get')->name('get-penilaian');
+        Route::get('/show-penilaian', 'PenilaianController@show')->name('show-penilaian');
+        Route::post('/add-penilaian', 'PenilaianController@store')->name('add-penilaian');
+        Route::post('/update-penilaian', 'PenilaianController@update')->name('update-penilaian');
+        Route::delete('/delete-penilaian/{params}', 'PenilaianController@delete')->name('delete-penilaian');
+
+        Route::get('/nilai-cpmk', 'NilaiCpmk@index')->name('nilai-cpmk');
+        Route::get('/get-nilai-cpmk', 'NilaiCpmk@get')->name('get-nilai-cpmk');
 
         Route::get('/nilaicpl', 'NilaiCpl@index')->name('nilaicpl');
-        Route::get('/get-nilaicpl/{params}', 'NilaiCpl@get')->name('get-nilaicpl');
+        Route::get('/get-nilaicpl', 'NilaiCpl@get')->name('get-nilaicpl');
+
+        Route::get('/get-matkul-by-user', 'MataKuliahController@get_by_user')->name('get-matkul-by-user');
+        Route::get('/get-cpmk-by-matkul/{params}', 'CpmkController@get_cpmk_by_matkul')->name('get-cpmk-by-matkul');
+
+        Route::get('/extract-pdf', 'NilaiCpl@extract_pdf')->name('extract-pdf');
     });
 
     Route::get('/ubahpassword', 'UbahPassword@index')->name('ubahpassword');

@@ -21,7 +21,6 @@ class SubCpmk extends Model
         'deskripsi',
         'teknik_penilaian',
         'bobot',
-        'nilai_sub',
     ];
 
     protected static function boot()

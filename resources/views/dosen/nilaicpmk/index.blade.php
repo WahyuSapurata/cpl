@@ -1,13 +1,4 @@
 @extends('layouts.layout')
-@section('button')
-    <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
-        <!--begin::Actions-->
-        <div class="d-flex align-items-center gap-2 gap-lg-3">
-            <a href="#" id="btn-extract" class="btn btn-sm btn-danger export disabled">Export PDF</a>
-        </div>
-        <!--end::Actions-->
-    </div>
-@endsection
 @section('content')
     <div class="post d-flex flex-column-fluid" id="kt_post">
         <!--begin::Container-->
@@ -19,8 +10,8 @@
                         <form>
                             <div class="mb-10">
                                 <label class="form-label">Mata Kuliah</label>
-                                <select name="uuid_matkul" class="form-select" data-control="select2"
-                                    id="from_select_matkul" data-placeholder="Pilih jenis inputan">
+                                <select name="uuid_matkul" class="form-select" data-control="select2" id="from_select_matkul"
+                                    data-placeholder="Pilih jenis inputan">
                                 </select>
                                 <small class="text-danger uuid_matkul_error"></small>
                             </div>
@@ -94,7 +85,6 @@
         $(document).ready(function() {
             $(document).on('click', '#button-cari', function(e) {
                 e.preventDefault(); // Menghentikan pengiriman form standar
-                $('#btn-extract').removeClass('disabled');
                 $('#data-kosong').empty();
                 // Kosongkan elemen thead
                 $('#tThead').empty();
@@ -107,20 +97,17 @@
                     'tahun_ajaran': tahun_ajaran
                 };
 
-                extract(data);
-
                 $.ajax({
-                    url: `/dosen/get-nilaicpl`,
+                    url: `/dosen/get-nilai-cpmk`,
                     method: 'GET',
                     data: data,
                     success: function(res) {
-                        console.log(res);
-                        let kodeCpl = res.data.kode_cpl.map(item => item);
-                        let kodeCplHead = kodeCpl.map(cpl =>
-                            `<th>${cpl}</th>`).join('');
+                        let kodeCpmk = res.data.kode_cpmk.map(item => item);
+                        let kodeCpmkHead = kodeCpmk.map(cpmk =>
+                            `<th>${cpmk}</th>`).join('');
 
                         let combinedData = combineDataByUuid(res.data.data);
-                        let label_head = ['nama_mahasiswa', ...kodeCpl];
+                        let label_head = ['nama_mahasiswa', ...kodeCpmk];
 
                         // Hapus DataTable sebelumnya (jika ada) sebelum menginisialisasi yang baru
                         if ($.fn.DataTable.isDataTable('#kt_table_data')) {
@@ -128,7 +115,7 @@
                         }
 
                         // Inisialisasi ulang DataTable dengan data yang diperbarui
-                        initDatatable(combinedData, kodeCplHead, label_head);
+                        initDatatable(combinedData, kodeCpmkHead, label_head);
                     },
                     error: function(error) {
                         console.error(error);
@@ -160,9 +147,9 @@
             return Object.values(combined);
         };
 
-        const initDatatable = async (data, kodeCplHead, label_head) => {
+        const initDatatable = async (data, kodeCpmkHead, label_head) => {
             // Buat elemen No dengan atribut class yang sesuai
-            let tr = `<tr><th>No</th><th>Nama Mahasiswa</th>${kodeCplHead}</tr>`;
+            let tr = `<tr><th>No</th><th>Nama Mahasiswa</th>${kodeCpmkHead}</tr>`;
             // Tambahkan elemen thead yang baru
             $('#kt_table_data thead').html(tr);
 
@@ -207,14 +194,5 @@
         $(function() {
             control.push_select_mahasiswa('/operator/data-master/get-mahasiswa', '#from_select_mahasiswa');
         });
-
-        const extract = (data) => {
-            $('#btn-extract').click(function(e) {
-                e.preventDefault();
-                const jsonData = JSON.stringify(data);
-                const encodedData = encodeURIComponent(jsonData);
-                window.open('/dosen/extract-pdf?data=' + encodedData, "_blank");
-            });
-        };
     </script>
 @endsection

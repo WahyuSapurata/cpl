@@ -18,8 +18,6 @@ class MataKuliah extends Model
         'kode_mk',
         'mata_kuliah',
         'sks',
-        'kelas',
-        'semester',
     ];
 
     protected static function boot()

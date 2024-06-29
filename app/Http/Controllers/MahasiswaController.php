@@ -2,36 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreIndikatorKinerjaRequest;
-use App\Http\Requests\UpdateIndikatorKinerjaRequest;
-use App\Models\IndikatorKinerja;
+use App\Http\Requests\StoreMahasiswaRequest;
+use App\Http\Requests\UpdateMahasiswaRequest;
+use App\Models\Mahasiswa;
 
-class IndikatorKinerjaController extends BaseController
+class MahasiswaController extends BaseController
 {
     public function index()
     {
-        $module = 'Indikator Kinerja';
-        return view('operator.indikatorkinerja.index', compact('module'));
+        $module = 'Mahasiswa';
+        return view('operator.mahasiswa.index', compact('module'));
     }
 
     public function get()
     {
         // Mengambil semua data pengguna
-        $dataFull = IndikatorKinerja::all();
+        $dataFull = Mahasiswa::all();
 
         // Mengembalikan response berdasarkan data yang sudah disaring
         return $this->sendResponse($dataFull, 'Get data success');
     }
 
-    public function store(StoreIndikatorKinerjaRequest $storeIndikatorKinerjaRequest)
+    public function store(StoreMahasiswaRequest $storeMahasiswaRequest)
     {
         $data = array();
         try {
-            $data = new IndikatorKinerja();
-            $data->kode_ik = $storeIndikatorKinerjaRequest->kode_ik;
-            $data->kemampuan = $storeIndikatorKinerjaRequest->kemampuan;
-            $data->deskripsi = $storeIndikatorKinerjaRequest->deskripsi;
-            $data->bobot = $storeIndikatorKinerjaRequest->bobot;
+            $data = new Mahasiswa();
+            $data->nim = $storeMahasiswaRequest->nim;
+            $data->nama = $storeMahasiswaRequest->nama;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);
@@ -43,21 +41,19 @@ class IndikatorKinerjaController extends BaseController
     {
         $data = array();
         try {
-            $data = IndikatorKinerja::where('uuid', $params)->first();
+            $data = Mahasiswa::where('uuid', $params)->first();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);
         }
         return $this->sendResponse($data, 'Show data success');
     }
 
-    public function update(StoreIndikatorKinerjaRequest $storeIndikatorKinerjaRequest, $params)
+    public function update(StoreMahasiswaRequest $storeMahasiswaRequest, $params)
     {
         try {
-            $data = IndikatorKinerja::where('uuid', $params)->first();
-            $data->kode_ik = $storeIndikatorKinerjaRequest->kode_ik;
-            $data->kemampuan = $storeIndikatorKinerjaRequest->kemampuan;
-            $data->deskripsi = $storeIndikatorKinerjaRequest->deskripsi;
-            $data->bobot = $storeIndikatorKinerjaRequest->bobot;
+            $data = Mahasiswa::where('uuid', $params)->first();
+            $data->nim = $storeMahasiswaRequest->nim;
+            $data->nama = $storeMahasiswaRequest->nama;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);
@@ -70,7 +66,7 @@ class IndikatorKinerjaController extends BaseController
     {
         $data = array();
         try {
-            $data = IndikatorKinerja::where('uuid', $params)->first();
+            $data = Mahasiswa::where('uuid', $params)->first();
             $data->delete();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);

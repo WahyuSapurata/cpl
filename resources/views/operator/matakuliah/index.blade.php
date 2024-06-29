@@ -39,8 +39,6 @@
                                             <th>Mata Kuliah</th>
                                             <th>Nama Dosen</th>
                                             <th>SKS</th>
-                                            <th>Kelas</th>
-                                            <th>Semester</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -132,21 +130,6 @@
                         <small class="text-danger sks_error"></small>
                     </div>
 
-                    <div class="mb-10">
-                        <label class="form-label">Kelas</label>
-                        <input type="text" id="kelas" class="form-control" name="kelas">
-                        <small class="text-danger kelas_error"></small>
-                    </div>
-
-                    <div class="mb-10">
-                        <label class="form-label">Semester</label>
-                        <input type="text" id="semester" class="form-control" name="semester">
-                        <small class="text-danger semester_error"></small>
-                    </div>
-
-                    <div id="container_id">
-                    </div>
-
                     <div class="separator separator-dashed mt-8 mb-5"></div>
                     <div class="d-flex gap-5">
                         <button type="submit" class="btn btn-primary btn-sm btn-submit d-flex align-items-center"><i
@@ -175,12 +158,12 @@
             e.preventDefault();
             let type = $(this).attr('data-type');
             if (type == 'add') {
-                control.submitFormMultipartData('/operator/add-mata-kuliah', 'Tambah',
+                control.submitFormMultipartData('/operator/data-master/add-mata-kuliah', 'Tambah',
                     'Mata Kuliah',
                     'POST');
             } else {
                 let uuid = $("input[name='uuid']").val();
-                control.submitFormMultipartData('/operator/update-mata-kuliah/' + uuid,
+                control.submitFormMultipartData('/operator/data-master/update-mata-kuliah/' + uuid,
                     'Update',
                     'Mata Kuliah', 'POST');
             }
@@ -188,13 +171,13 @@
 
         $(document).on('click', '.button-update', function(e) {
             e.preventDefault();
-            let url = '/operator/show-mata-kuliah/' + $(this).attr('data-uuid');
+            let url = '/operator/data-master/show-mata-kuliah/' + $(this).attr('data-uuid');
             control.overlay_form('Update', 'Mata Kuliah', url);
         })
 
         $(document).on('click', '.button-delete', function(e) {
             e.preventDefault();
-            let url = '/operator/delete-mata-kuliah/' + $(this).attr('data-uuid');
+            let url = '/operator/data-master/delete-mata-kuliah/' + $(this).attr('data-uuid');
             let label = $(this).attr('data-label');
             control.ajaxDelete(url, label)
         })
@@ -218,7 +201,7 @@
                     [0, 'asc']
                 ],
                 processing: true,
-                ajax: '/operator/get-mata-kuliah',
+                ajax: '/operator/data-master/get-mata-kuliah',
                 columns: [{
                     data: null,
                     render: function(data, type, row, meta) {
@@ -235,12 +218,6 @@
                     className: 'text-center',
                 }, {
                     data: 'sks',
-                    className: 'text-center',
-                }, {
-                    data: 'kelas',
-                    className: 'text-center',
-                }, {
-                    data: 'semester',
                     className: 'text-center',
                 }, {
                     data: 'uuid',
@@ -288,7 +265,7 @@
         };
 
         $(function() {
-            control.push_select2('/operator/get-data-dosen', '#from_select');
+            control.push_select2('/operator/data-master/get-data-dosen', '#from_select');
             initDatatable();
         });
     </script>

@@ -159,12 +159,12 @@
             e.preventDefault();
             let type = $(this).attr('data-type');
             if (type == 'add') {
-                control.submitFormMultipartData('/operator/add-data-dosen', 'Tambah',
+                control.submitFormMultipartData('/operator/data-master/add-data-dosen', 'Tambah',
                     'Data Dosen',
                     'POST');
             } else {
                 let uuid = $("input[name='uuid']").val();
-                control.submitFormMultipartData('/operator/update-data-dosen/' + uuid,
+                control.submitFormMultipartData('/operator/data-master/update-data-dosen/' + uuid,
                     'Update',
                     'Data Dosen', 'POST');
             }
@@ -172,13 +172,13 @@
 
         $(document).on('click', '.button-update', function(e) {
             e.preventDefault();
-            let url = '/operator/show-data-dosen/' + $(this).attr('data-uuid');
+            let url = '/operator/data-master/show-data-dosen/' + $(this).attr('data-uuid');
             control.overlay_form('Update', 'Data Dosen', url);
         })
 
         $(document).on('click', '.button-delete', function(e) {
             e.preventDefault();
-            let url = '/operator/delete-data-dosen/' + $(this).attr('data-uuid');
+            let url = '/operator/data-master/delete-data-dosen/' + $(this).attr('data-uuid');
             let label = $(this).attr('data-label');
             control.ajaxDelete(url, label)
         })
@@ -204,7 +204,7 @@
                     [0, 'asc']
                 ],
                 processing: true,
-                ajax: '/operator/get-data-dosen',
+                ajax: '/operator/data-master/get-data-dosen',
                 columns: [{
                         data: null,
                         render: function(data, type, row, meta) {

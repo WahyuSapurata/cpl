@@ -26,8 +26,6 @@ class StoreMataKuliahRequest extends FormRequest
             'kode_mk' => 'required|unique:mata_kuliahs,kode_mk',
             'mata_kuliah' => 'required',
             'sks' => 'required',
-            'kelas' => 'required',
-            'semester' => 'required',
         ];
     }
 
@@ -39,8 +37,6 @@ class StoreMataKuliahRequest extends FormRequest
             'kode_mk.unique' => 'kode mata kuliah sudah digunakan.',
             'mata_kuliah.required' => 'Kolom mata kuliah harus di isi.',
             'sks.required' => 'Kolom sks harus di isi.',
-            'kelas.required' => 'Kolom kelas harus di isi.',
-            'semester.required' => 'Kolom semester harus di isi.',
         ];
     }
 }

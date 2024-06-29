@@ -1,13 +1,4 @@
 @extends('layouts.layout')
-@section('button')
-    <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
-        <!--begin::Actions-->
-        <div class="d-flex align-items-center gap-2 gap-lg-3">
-            <a href="#" id="btn-extract" class="btn btn-sm btn-danger export disabled">Export PDF</a>
-        </div>
-        <!--end::Actions-->
-    </div>
-@endsection
 @section('content')
     <div class="post d-flex flex-column-fluid" id="kt_post">
         <!--begin::Container-->
@@ -19,8 +10,8 @@
                         <form>
                             <div class="mb-10">
                                 <label class="form-label">Mata Kuliah</label>
-                                <select name="uuid_matkul" class="form-select" data-control="select2"
-                                    id="from_select_matkul" data-placeholder="Pilih jenis inputan">
+                                <select name="uuid_matkul" class="form-select" data-control="select2" id="from_select_matkul"
+                                    data-placeholder="Pilih jenis inputan">
                                 </select>
                                 <small class="text-danger uuid_matkul_error"></small>
                             </div>
@@ -87,7 +78,7 @@
         const data = generateSchoolYears(2000);
 
         $(function() {
-            control.push_select_mk('/dosen/get-matkul-by-user', '#from_select_matkul');
+            control.push_select_mk('/operator/data-master/get-mata-kuliah', '#from_select_matkul');
             control.push_select_data(data, '#from_select_tahun_ajaran');
         });
 
@@ -106,8 +97,6 @@
                     'matkul': matkul,
                     'tahun_ajaran': tahun_ajaran
                 };
-
-                extract(data);
 
                 $.ajax({
                     url: `/dosen/get-nilaicpl`,
@@ -201,19 +190,6 @@
                     var rowIndex = startIndex + index + 1;
                     $('td', row).eq(0).html(rowIndex);
                 },
-            });
-        };
-
-        $(function() {
-            control.push_select_mahasiswa('/operator/data-master/get-mahasiswa', '#from_select_mahasiswa');
-        });
-
-        const extract = (data) => {
-            $('#btn-extract').click(function(e) {
-                e.preventDefault();
-                const jsonData = JSON.stringify(data);
-                const encodedData = encodeURIComponent(jsonData);
-                window.open('/dosen/extract-pdf?data=' + encodedData, "_blank");
             });
         };
     </script>

@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('indikator_kinerjas', function (Blueprint $table) {
+        Schema::create('penilaians', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->string('kode_ik');
-            $table->string('kemampuan');
-            $table->text('deskripsi');
-            $table->string('bobot');
+            $table->uuid('uuid_mahasiswa');
+            $table->uuid('uuid_sub_cpmks');
+            $table->float('nilai')->nullable()->default(0);
+            $table->string('tahun_ajaran');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('indikator_kinerjas');
+        Schema::dropIfExists('penilaians');
     }
 };
