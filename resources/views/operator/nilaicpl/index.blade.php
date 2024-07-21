@@ -9,13 +9,6 @@
                     <div class="card mb-5 py-3 w-50">
                         <form>
                             <div class="mb-10">
-                                <label class="form-label">Mata Kuliah</label>
-                                <select name="uuid_matkul" class="form-select" data-control="select2" id="from_select_matkul"
-                                    data-placeholder="Pilih jenis inputan">
-                                </select>
-                                <small class="text-danger uuid_matkul_error"></small>
-                            </div>
-                            <div class="mb-10">
                                 <label class="form-label">Tahun Ajaran</label>
                                 <select name="tahun_ajaran" class="form-select" data-control="select2"
                                     id="from_select_tahun_ajaran" data-placeholder="Pilih">
@@ -23,7 +16,7 @@
                                 <small class="text-danger tahun_ajaran_error"></small>
                             </div>
                             <div class="d-flex my-5">
-                                <button class="btn btn-primary btn-sm " id="button-cari"></i>Cari Data</button>
+                                <button class="btn btn-primary btn-sm" id="button-cari"></i>Cari Data</button>
                             </div>
                         </form>
                     </div>
@@ -36,7 +29,11 @@
                                 <table id="kt_table_data"
                                     class="table table-striped table-rounded border border-gray-300 table-row-bordered table-row-gray-300">
                                     <thead class="text-center">
-                                        <tr id="tThead" class="fw-bolder fs-6 text-gray-800">
+                                        <tr class="fw-bolder fs-6 text-gray-800">
+                                            <th>No</th>
+                                            <th>Kode CPL</th>
+                                            <th>Deskripsi</th>
+                                            <th>Ketercapaian CPL</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -78,7 +75,6 @@
         const data = generateSchoolYears(2000);
 
         $(function() {
-            control.push_select_mk('/operator/data-master/get-mata-kuliah', '#from_select_matkul');
             control.push_select_data(data, '#from_select_tahun_ajaran');
         });
 
@@ -90,34 +86,24 @@
                 // Kosongkan elemen thead
                 $('#tThead').empty();
 
-                const matkul = $('#from_select_matkul').val();
                 const tahun_ajaran = $('#from_select_tahun_ajaran').val();
 
                 const data = {
-                    'matkul': matkul,
                     'tahun_ajaran': tahun_ajaran
                 };
 
                 $.ajax({
-                    url: `/dosen/get-nilaicpl`,
+                    url: `/operator/get-cpl-operator`,
                     method: 'GET',
                     data: data,
                     success: function(res) {
-                        console.log(res);
-                        let kodeCpl = res.data.kode_cpl.map(item => item);
-                        let kodeCplHead = kodeCpl.map(cpl =>
-                            `<th>${cpl}</th>`).join('');
-
-                        let combinedData = combineDataByUuid(res.data.data);
-                        let label_head = ['nama_mahasiswa', ...kodeCpl];
-
                         // Hapus DataTable sebelumnya (jika ada) sebelum menginisialisasi yang baru
                         if ($.fn.DataTable.isDataTable('#kt_table_data')) {
                             $('#kt_table_data').DataTable().clear().destroy();
                         }
 
                         // Inisialisasi ulang DataTable dengan data yang diperbarui
-                        initDatatable(combinedData, kodeCplHead, label_head);
+                        initDatatable(res.data.data);
                     },
                     error: function(error) {
                         console.error(error);
@@ -126,34 +112,7 @@
             });
         });
 
-        const combineDataByUuid = (data) => {
-
-            const combined = {};
-
-            data.forEach(item => {
-                const nama_mahasiswa = item.nama_mahasiswa;
-
-                if (!combined[nama_mahasiswa]) {
-                    combined[nama_mahasiswa] = {
-                        nama_mahasiswa,
-                    };
-                }
-
-                Object.keys(item).forEach(key => {
-                    if (key !== 'nama_mahasiswa') {
-                        combined[nama_mahasiswa][key] = item[key];
-                    }
-                });
-            });
-
-            return Object.values(combined);
-        };
-
-        const initDatatable = async (data, kodeCplHead, label_head) => {
-            // Buat elemen No dengan atribut class yang sesuai
-            let tr = `<tr><th>No</th><th>Nama Mahasiswa</th>${kodeCplHead}</tr>`;
-            // Tambahkan elemen thead yang baru
-            $('#kt_table_data thead').html(tr);
+        const initDatatable = async (data) => {
 
             // Destroy existing DataTable if it exists
             if ($.fn.DataTable.isDataTable('#kt_table_data')) {
@@ -170,20 +129,30 @@
                 processing: true,
                 data: data,
                 columns: [{
-                        data: null,
-                        render: function(data, type, row, meta) {
-                            return meta.row + 1;
-                        },
-                    },
-                    ...label_head.map((key) => {
-                        return {
-                            data: key,
-                            render: function(data, type, row, meta) {
-                                return data ? data : '0';
-                            }
-                        };
-                    })
-                ],
+                    data: null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                }, {
+                    data: 'kode_cpl',
+                    className: 'text-center',
+                }, {
+                    data: 'deskripsi',
+                    className: 'text-center',
+                }, {
+                    data: 'nilai',
+                    className: 'text-center',
+                    render: function(data, type, row) {
+                        // Memastikan bahwa nilai adalah angka
+                        var number = parseFloat(data);
+                        if (isNaN(number)) {
+                            return data;
+                        }
+
+                        // Membulatkan angka ke dua desimal
+                        return number.toFixed(2);
+                    }
+                }],
                 rowCallback: function(row, data, index) {
                     var api = this.api();
                     var startIndex = api.context[0]._iDisplayStart;

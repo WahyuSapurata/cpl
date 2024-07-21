@@ -23,6 +23,7 @@ class StoreCplProdiRequest extends FormRequest
     {
         return [
             'kode_cpl' => 'required',
+            'aspek' => 'required',
             'deskripsi' => 'required',
         ];
     }
@@ -31,6 +32,7 @@ class StoreCplProdiRequest extends FormRequest
     {
         return [
             'kode_cpl.required' => 'Kolom kode cpl harus di isi.',
+            'aspek.required' => 'Kolom aspek harus di isi.',
             'deskripsi.required' => 'Kolom deskripsi harus di isi.',
         ];
     }

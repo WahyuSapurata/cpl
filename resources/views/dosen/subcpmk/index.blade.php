@@ -79,7 +79,7 @@
                                             <th>Kode CPMK</th>
                                             <th>Nama Sub</th>
                                             <th>Deskripsi</th>
-                                            <th>Teknik Penilaian</th>
+                                            <th>Indikator</th>
                                             <th>Bobot (%)</th>
                                             @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'lpm')
                                                 <th>Aksi</th>
@@ -170,7 +170,7 @@
                     </div>
 
                     <div class="mb-10">
-                        <label class="form-label">Teknik Penilaian</label>
+                        <label class="form-label">Indikator</label>
                         <input type="text" id="teknik_penilaian" class="form-control" name="teknik_penilaian">
                         <small class="text-danger teknik_penilaian_error"></small>
                     </div>

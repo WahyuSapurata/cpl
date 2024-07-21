@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->string('kode_cpl');
+            $table->string('aspek');
             $table->text('deskripsi');
             $table->timestamps();
         });

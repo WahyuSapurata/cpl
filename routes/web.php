@@ -119,6 +119,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/nilaicpl', 'NilaiCpl@operator')->name('nilaicpl');
         Route::get('/nilai', 'NilaiController@index')->name('nilai');
 
+        Route::get('/get-cpl-operator', 'NilaiCpl@get_operator')->name('get-cpl-operator');
+
+        Route::get('/get-cpl-dashboard', 'Dashboard@get_nilai_cpl_operator')->name('get-cpl-dashboard');
+
         Route::get('/extract-pdf/{params}', 'NilaiCpl@extract_pdf')->name('extract-pdf');
     });
 

@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen' && auth()->user()->role != 'lpm')
+@if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen' && auth()->user()->role != 'lpm ')
     @section('button')
         <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
             <!--begin::Page title-->
@@ -38,8 +38,9 @@
                                         <tr class="fw-bolder fs-6 text-gray-800">
                                             <th>No</th>
                                             <th>Kode CPL</th>
+                                            <th>Aspek</th>
                                             <th>Deskripsi</th>
-                                            @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen' && auth()->user()->role != 'lpm')
+                                            @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen' && auth()->user()->role != 'lpm ')
                                                 <th>Aksi</th>
                                             @endif
                                         </tr>
@@ -110,6 +111,12 @@
                         <label class="form-label">Kode CPL</label>
                         <input type="text" id="kode_cpl" class="form-control" name="kode_cpl">
                         <small class="text-danger kode_cpl_error"></small>
+                    </div>
+
+                    <div class="mb-10">
+                        <label class="form-label">Aspek</label>
+                        <input type="text" id="aspek" class="form-control" name="aspek">
+                        <small class="text-danger aspek_error"></small>
                     </div>
 
                     <div class="mb-10">
@@ -199,16 +206,19 @@
                         data: 'kode_cpl',
                         className: 'text-center',
                     }, {
+                        data: 'aspek',
+                        className: 'text-center',
+                    }, {
                         data: 'deskripsi',
                         className: 'text-center',
                     },
-                    @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen'&& auth()->user()->role != 'lpm')
+                    @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen' && auth()->user()->role != 'lpm')
                         {
                             data: 'uuid',
                         }
                     @endif
                 ],
-                @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen' && auth()->user()->role != 'lpm')
+                @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'dosen' && auth()->user()->role != 'lpm ')
                     columnDefs: [{
                         targets: -1,
                         title: 'Aksi',

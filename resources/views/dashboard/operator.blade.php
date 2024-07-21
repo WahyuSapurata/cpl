@@ -5,14 +5,7 @@
         <div id="kt_content_container" class="container">
 
             <form class="row p-8 bg-white rounded-2 mb-5">
-                <div class="col-md-5">
-                    <label class="form-label">Mata Kuliah</label>
-                    <select name="uuid_matkul" class="form-select" data-control="select2" id="from_select_matkul"
-                        data-placeholder="Pilih jenis inputan">
-                    </select>
-                    <small class="text-danger uuid_matkul_error"></small>
-                </div>
-                <div class="col-md-5">
+                <div class="col-md-10">
                     <label class="form-label">Tahun Ajaran</label>
                     <select name="tahun_ajaran" class="form-select" data-control="select2" id="from_select_tahun_ajaran"
                         data-placeholder="Pilih">
@@ -88,7 +81,6 @@
         const data = generateSchoolYears(2000);
 
         $(function() {
-            control.push_select_mk('/operator/data-master/get-mata-kuliah', '#from_select_matkul');
             control.push_select_data(data, '#from_select_tahun_ajaran');
         });
 
@@ -97,24 +89,22 @@
                 e.preventDefault(); // Menghentikan pengiriman form standar
                 $('#noData').addClass('d-none');
 
-                const matkul = $('#from_select_matkul').val();
                 const tahun_ajaran = $('#from_select_tahun_ajaran').val();
 
                 const data = {
-                    'matkul': matkul,
                     'tahun_ajaran': tahun_ajaran
                 };
 
                 $.ajax({
-                    url: `/dosen/get-nilai-cpl-user`,
+                    url: `/operator/get-cpl-dashboard`,
                     method: 'GET',
                     data: data,
                     beforeSend: function() {
                         $('.loading').show();
                     },
                     success: function(response) {
-                        if (response.data && Object.keys(response.data).length > 0) {
-                            getGrafik(response.data);
+                        if (response.data.data && Object.keys(response.data.data).length > 0) {
+                            getGrafik(response.data.data);
                         } else {
                             // Data kosong, kosongkan grafik atau lakukan sesuatu yang sesuai
                             clearGrafik();
@@ -140,11 +130,13 @@
             var labels = [];
             var jumlahData = [];
             var backgroundColors = [];
+            var nilaiBobot = [];
 
             // Mengiterasi objek data
             for (const [key, value] of Object.entries(data)) {
-                labels.push(key + ' Target ' + value.bobot + '%');
+                labels.push(value.kode_cpl + ' Target ' + value.total_bobot + '%');
                 jumlahData.push(value.nilai);
+                nilaiBobot.push(value.total_bobot);
 
                 // Menambahkan warna acak untuk setiap bar
                 backgroundColors.push(getRandomColor());
@@ -165,15 +157,28 @@
                 labels: labels,
                 datasets: [{
                     label: 'Nilai CPL', // Menggunakan label umum untuk dataset
-                    backgroundColor: backgroundColors,
-                    borderColor: backgroundColors,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    pointBackgroundColor: 'rgb(255, 99, 132)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(255, 99, 132)',
                     data: jumlahData,
+                }, {
+                    label: 'Target Bobot', // Menggunakan label umum untuk dataset
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    pointBackgroundColor: 'rgb(54, 162, 235)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(54, 162, 235)',
+                    data: nilaiBobot,
                 }]
             };
 
             // Chart config
             const config = {
-                type: 'bar',
+                type: 'radar',
                 data: chartData,
                 options: {
                     plugins: {
@@ -184,8 +189,13 @@
                     },
                     responsive: true,
                     scales: {
-                        y: {
-                            beginAtZero: true
+                        r: {
+                            beginAtZero: true,
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
                         }
                     },
                     defaults: {

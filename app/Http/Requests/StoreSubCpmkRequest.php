@@ -36,7 +36,7 @@ class StoreSubCpmkRequest extends FormRequest
             'uuid_cpmk.required' => 'Kolom cpmk harus di isi.',
             'nama_sub.required' => 'Kolom nama sub harus di isi.',
             'deskripsi.required' => 'Kolom deskripsi harus di isi.',
-            'teknik_penilaian.required' => 'Kolom teknik penilaian harus di isi.',
+            'teknik_penilaian.required' => 'Kolom indikator harus di isi.',
             'bobot.required' => 'Kolom bobot harus di isi.',
         ];
     }

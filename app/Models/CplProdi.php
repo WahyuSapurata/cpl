@@ -15,6 +15,7 @@ class CplProdi extends Model
     protected $fillable = [
         'uuid',
         'kode_cpl',
+        'aspek',
         'deskripsi',
     ];
 

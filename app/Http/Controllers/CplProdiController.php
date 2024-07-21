@@ -29,6 +29,7 @@ class CplProdiController extends BaseController
         try {
             $data = new CplProdi();
             $data->kode_cpl = $storeCplProdiRequest->kode_cpl;
+            $data->aspek = $storeCplProdiRequest->aspek;
             $data->deskripsi = $storeCplProdiRequest->deskripsi;
             $data->save();
         } catch (\Exception $e) {
@@ -53,6 +54,7 @@ class CplProdiController extends BaseController
         try {
             $data = CplProdi::where('uuid', $params)->first();
             $data->kode_cpl = $storeCplProdiRequest->kode_cpl;
+            $data->aspek = $storeCplProdiRequest->aspek;
             $data->deskripsi = $storeCplProdiRequest->deskripsi;
             $data->save();
         } catch (\Exception $e) {

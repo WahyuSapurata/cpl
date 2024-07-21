@@ -57,7 +57,7 @@
                                             <th>Kode CPMK</th>
                                             <th>Nama Sub</th>
                                             <th>Deskripsi</th>
-                                            <th>Teknik Penilaian</th>
+                                            <th>Indikator</th>
                                             <th>Bobot (%)</th>
                                         </tr>
                                     </thead>
