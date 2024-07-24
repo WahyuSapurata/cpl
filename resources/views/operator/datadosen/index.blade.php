@@ -118,7 +118,7 @@
 
                     <div class="mb-10">
                         <label class="form-label">NIP/NIDN</label>
-                        <input type="text" id="nip" class="form-control" name="nip">
+                        <input type="number" id="nip" class="form-control" name="nip">
                         <small class="text-danger nip_error"></small>
                     </div>
 

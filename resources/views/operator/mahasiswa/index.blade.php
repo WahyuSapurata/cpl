@@ -104,7 +104,7 @@
 
                     <div class="mb-10">
                         <label class="form-label">NIM</label>
-                        <input type="text" id="nim" class="form-control" name="nim">
+                        <input type="number" id="nim" class="form-control" name="nim">
                         <small class="text-danger nim_error"></small>
                     </div>
 
