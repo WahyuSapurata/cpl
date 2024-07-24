@@ -412,7 +412,6 @@
                         className: 'text-center',
                     }, {
                         data: 'deskripsi',
-                        className: 'text-center',
                     }, {
                         data: 'teknik_penilaian',
                         className: 'text-center',

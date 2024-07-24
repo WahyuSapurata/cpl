@@ -286,7 +286,6 @@
                         className: 'text-center',
                     }, {
                         data: 'deskripsi',
-                        className: 'text-center',
                     }, {
                         data: 'bobot',
                         className: 'text-center',

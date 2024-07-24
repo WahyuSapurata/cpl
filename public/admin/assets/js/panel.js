@@ -674,6 +674,24 @@ class Control {
         });
     }
 
+    push_select_kurikulum(url, element) {
+        $.ajax({
+            url: url,
+            method: "GET",
+            success: function (res) {
+                $(element).html("");
+                let html = "<option selected disabled>Pilih</option>";
+                $.each(res.data, function (x, y) {
+                    html += `<option value="${y.uuid}">${y.kode}</option>`;
+                });
+                $(element).html(html);
+            },
+            error: function (xhr) {
+                alert("gagal");
+            },
+        });
+    }
+
     push_select_ik(url, element) {
         $.ajax({
             url: url,

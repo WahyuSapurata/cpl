@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cpl_prodis', function (Blueprint $table) {
+        Schema::create('kurikulums', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->uuid('uuid_kurikulum');
-            $table->string('kode_cpl');
-            $table->string('aspek');
-            $table->text('deskripsi');
+            $table->string('kode');
+            $table->string('nama');
+            $table->string('tahun_mulai');
+            $table->string('tahun_berakhir');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cpl_prodis');
+        Schema::dropIfExists('kurikulums');
     }
 };

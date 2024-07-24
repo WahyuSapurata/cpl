@@ -19,7 +19,7 @@
                     </select>
                     <small class="text-danger tahun_ajaran_error"></small>
                 </div>
-                <div class="col-md-2 d-flex justify-content-center align-items-center">
+                <div class="col-md-2 d-flex justify-content-center align-items-end">
                     <button class="btn btn-primary btn-sm " id="button-cari"></i>Cari Data</button>
                 </div>
             </form>

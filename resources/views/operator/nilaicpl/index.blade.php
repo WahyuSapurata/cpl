@@ -138,7 +138,6 @@
                     className: 'text-center',
                 }, {
                     data: 'deskripsi',
-                    className: 'text-center',
                 }, {
                     data: 'nilai',
                     className: 'text-center',

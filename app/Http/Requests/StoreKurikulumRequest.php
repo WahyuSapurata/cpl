@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCplProdiRequest extends FormRequest
+class StoreKurikulumRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,20 +22,20 @@ class StoreCplProdiRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'uuid_kurikulum' => 'required',
-            'kode_cpl' => 'required',
-            'aspek' => 'required',
-            'deskripsi' => 'required',
+            'kode' => 'required',
+            'nama' => 'required',
+            'tahun_mulai' => 'required',
+            'tahun_berakhir' => 'required',
         ];
     }
 
     public function messages()
     {
         return [
-            'uuid_kurikulum.required' => 'Kolom kurikulum harus di isi.',
-            'kode_cpl.required' => 'Kolom kode cpl harus di isi.',
-            'aspek.required' => 'Kolom aspek harus di isi.',
-            'deskripsi.required' => 'Kolom deskripsi harus di isi.',
+            'kode.required' => 'Kolom kode harus di isi.',
+            'nama.required' => 'Kolom nama harus di isi.',
+            'tahun_mulai.required' => 'Kolom tahun mulai harus di isi.',
+            'tahun_berakhir.required' => 'Kolom tahun berakhir harus di isi.',
         ];
     }
 }
