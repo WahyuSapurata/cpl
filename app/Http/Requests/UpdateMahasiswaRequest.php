@@ -11,7 +11,7 @@ class UpdateMahasiswaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,17 @@ class UpdateMahasiswaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nim' => 'required|unique:mahasiswas,nim,' . $this->route('params') . ',uuid',
+            'nama' => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'nim.required' => 'Kolom nim harus di isi.',
+            'nim.unique' => 'nim sudah digunakan oleh pengguna lain.',
+            'nama.required' => 'Kolom nama harus di isi.',
         ];
     }
 }

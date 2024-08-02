@@ -114,7 +114,6 @@
                     method: 'GET',
                     data: data,
                     success: function(res) {
-                        console.log(res);
                         let kodeCpl = res.data.kode_cpl.map(item => item);
                         let kodeCplHead = kodeCpl.map(cpl =>
                             `<th>${cpl}</th>`).join('');
@@ -152,7 +151,7 @@
 
                 Object.keys(item).forEach(key => {
                     if (key !== 'nama_mahasiswa') {
-                        combined[nama_mahasiswa][key] = item[key];
+                        combined[nama_mahasiswa][key] = parseFloat(item[key]).toFixed(2);
                     }
                 });
             });

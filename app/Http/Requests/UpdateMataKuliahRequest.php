@@ -23,7 +23,7 @@ class UpdateMataKuliahRequest extends FormRequest
     {
         return [
             'uuid_dosen' => 'required',
-            'kode_mk' => 'required|unique:mata_kuliahs,kode_mk,' . $this->route('params') . ',uuid',
+            'kode_mk' => 'required',
             'mata_kuliah' => 'required',
             'sks' => 'required',
             'kelas' => 'required',
@@ -36,7 +36,6 @@ class UpdateMataKuliahRequest extends FormRequest
         return [
             'uuid_dosen.required' => 'Kolom dosen harus di isi.',
             'kode_mk.required' => 'Kolom kode mata kuliah harus di isi.',
-            'kode_mk.unique' => 'kode mata kuliah sudah digunakan.',
             'mata_kuliah.required' => 'Kolom mata kuliah harus di isi.',
             'sks.required' => 'Kolom sks harus di isi.',
             'kelas.required' => 'Kolom kelas harus di isi.',

@@ -22,7 +22,7 @@ class StoreMahasiswaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nim' => 'required',
+            'nim' => 'required|unique:mahasiswas,nim',
             'nama' => 'required',
         ];
     }
@@ -31,6 +31,7 @@ class StoreMahasiswaRequest extends FormRequest
     {
         return [
             'nim.required' => 'Kolom nim harus di isi.',
+            'nim.unique' => 'nim sudah digunakan oleh pengguna lain.',
             'nama.required' => 'Kolom nama harus di isi.',
         ];
     }

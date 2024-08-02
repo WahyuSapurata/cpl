@@ -376,8 +376,8 @@
                         </div>
                         `
                         );
-                        $('#button-side-form').addClass('disabled');
-                        $("#bobot").prop("disabled", true);
+                        $('#button-side-form').addClass('readonly');
+                        $("#bobot").prop("readonly", true);
                     } else {
                         $('#alert-bobot').html(
                             `
@@ -398,8 +398,8 @@
                         </div>
                         `
                         );
-                        $('#button-side-form').removeClass('disabled');
-                        $("#bobot").prop("disabled", false);
+                        $('#button-side-form').removeClass('readonly');
+                        $("#bobot").prop("readonly", false);
                     }
                 } else {
                     console.error('Gagal mengambil data:', res.message);

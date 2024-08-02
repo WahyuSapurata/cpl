@@ -24,7 +24,7 @@ class StoreRequestDataDosen extends FormRequest
         return [
             'kode_dosen' => 'required|unique:users,kode_dosen',
             'name' => 'required',
-            'nip' => 'required',
+            'nip' => 'required|unique:users,nip',
             'username' => 'required|unique:users,username',
         ];
     }
@@ -36,6 +36,7 @@ class StoreRequestDataDosen extends FormRequest
             'username.unique' => 'kode dosen sudah digunakan oleh pengguna lain.',
             'name.required' => 'Kolom nama harus di isi.',
             'nip.required' => 'Kolom nip harus di isi.',
+            'nip.unique' => 'nip sudah digunakan oleh pengguna lain.',
             'username.required' => 'Kolom username harus di isi.',
             'username.unique' => 'username sudah digunakan oleh pengguna lain.',
         ];

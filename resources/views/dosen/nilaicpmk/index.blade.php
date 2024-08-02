@@ -139,7 +139,7 @@
 
                 Object.keys(item).forEach(key => {
                     if (key !== 'nama_mahasiswa') {
-                        combined[nama_mahasiswa][key] = item[key];
+                        combined[nama_mahasiswa][key] = parseFloat(item[key]).toFixed(2);
                     }
                 });
             });

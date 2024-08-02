@@ -229,7 +229,7 @@
                                     <input type="hidden" class="form-control" name="uuid_sub_cpmks[]" value="${item.uuid}">
                                     <div class="mb-10">
                                         <label class="form-label">${item.teknik_penilaian}</label>
-                                        <input type="number" class="form-control" name="nilai[]">
+                                        <input type="number" class="form-control" name="nilai[]" min="0" max="100">
                                         <small class="text-danger nilai_error"></small>
                                     </div>
                                 `

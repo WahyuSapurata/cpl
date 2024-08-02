@@ -23,7 +23,7 @@ class StoreMataKuliahRequest extends FormRequest
     {
         return [
             'uuid_dosen' => 'required',
-            'kode_mk' => 'required|unique:mata_kuliahs,kode_mk',
+            'kode_mk' => 'required',
             'mata_kuliah' => 'required',
             'sks' => 'required',
         ];
@@ -34,7 +34,6 @@ class StoreMataKuliahRequest extends FormRequest
         return [
             'uuid_dosen.required' => 'Kolom dosen harus di isi.',
             'kode_mk.required' => 'Kolom kode mata kuliah harus di isi.',
-            'kode_mk.unique' => 'kode mata kuliah sudah digunakan.',
             'mata_kuliah.required' => 'Kolom mata kuliah harus di isi.',
             'sks.required' => 'Kolom sks harus di isi.',
         ];
