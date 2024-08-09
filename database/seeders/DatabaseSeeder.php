@@ -24,44 +24,44 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        // User::updateOrCreate(
-        //     ['username' => 'admin'],
-        //     [
-        //         'uuid' => Uuid::uuid4()->toString(),
-        //         'name' => 'admin',
-        //         'password' => Hash::make('<>password'),
-        //         'role' => 'admin',
-        //     ]
-        // );
+        User::updateOrCreate(
+            ['username' => 'admin'],
+            [
+                'uuid' => Uuid::uuid4()->toString(),
+                'name' => 'admin',
+                'password' => Hash::make('<>password'),
+                'role' => 'admin',
+            ]
+        );
 
-        // User::updateOrCreate(
-        //     ['username' => 'operator'],
-        //     [
-        //         'uuid' => Uuid::uuid4()->toString(),
-        //         'name' => 'operator',
-        //         'password' => Hash::make('<>password'),
-        //         'role' => 'operator',
-        //     ]
-        // );
+        User::updateOrCreate(
+            ['username' => 'operator'],
+            [
+                'uuid' => Uuid::uuid4()->toString(),
+                'name' => 'operator',
+                'password' => Hash::make('<>password'),
+                'role' => 'operator',
+            ]
+        );
 
-        // User::updateOrCreate(
-        //     ['username' => 'kajur'],
-        //     [
-        //         'uuid' => Uuid::uuid4()->toString(),
-        //         'name' => 'kajur',
-        //         'password' => Hash::make('<>password'),
-        //         'role' => 'kajur',
-        //     ]
-        // );
+        User::updateOrCreate(
+            ['username' => 'kajur'],
+            [
+                'uuid' => Uuid::uuid4()->toString(),
+                'name' => 'kajur',
+                'password' => Hash::make('<>password'),
+                'role' => 'kajur',
+            ]
+        );
 
-        // User::updateOrCreate(
-        //     ['username' => 'lpm'],
-        //     [
-        //         'uuid' => Uuid::uuid4()->toString(),
-        //         'name' => 'lpm',
-        //         'password' => Hash::make('<>password'),
-        //         'role' => 'lpm',
-        //     ]
-        // );
+        User::updateOrCreate(
+            ['username' => 'lpm'],
+            [
+                'uuid' => Uuid::uuid4()->toString(),
+                'name' => 'lpm',
+                'password' => Hash::make('<>password'),
+                'role' => 'lpm',
+            ]
+        );
     }
 }

@@ -94,7 +94,7 @@ class NilaiCpl extends BaseController
             foreach ($cpl as $dataCpl) {
                 $kodeCpl = $dataCpl->kode_cpl;
                 if (!isset($item[$kodeCpl])) {
-                    $item[$kodeCpl] = null;
+                    $item[$kodeCpl] = 0;
                 }
             }
         }

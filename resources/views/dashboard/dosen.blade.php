@@ -33,7 +33,8 @@
                                 fill: #6363636b
                             }
                         </style>
-                        <path d="M367.2 412.5L99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192c41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192c-41.5 0-79.9 13.1-111.2 35.5L412.5 367.2zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/>
+                        <path
+                            d="M367.2 412.5L99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192c41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192c-41.5 0-79.9 13.1-111.2 35.5L412.5 367.2zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z" />
                     </svg>
                     <div class="text-muted fs-sm-2">Grafik Masih Kosong Pilih Mata Kuliah Terlebih Dahulu</div>
                 </div>
@@ -54,7 +55,8 @@
                                 fill: #6363636b
                             }
                         </style>
-                        <path d="M367.2 412.5L99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192c41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192c-41.5 0-79.9 13.1-111.2 35.5L412.5 367.2zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/>
+                        <path
+                            d="M367.2 412.5L99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192c41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192c-41.5 0-79.9 13.1-111.2 35.5L412.5 367.2zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z" />
                     </svg>
                     <div class="text-muted fs-sm-2">Belum ada nilai cpl</div>
                 </div>
@@ -136,16 +138,20 @@
             var fontFamily = KTUtil.getCssVariableValue('--bs-font-sans-serif');
 
             var labels = [];
-            var jumlahData = [];
-            var backgroundColors = [];
+            var nilaiData = [];
+            var targetData = [];
+            var nilaiColors = [];
+            var targetColors = [];
 
             // Mengiterasi objek data
             for (const [key, value] of Object.entries(data)) {
-                labels.push(key + ' Target ' + value.bobot + '%');
-                jumlahData.push(value.nilai);
+                labels.push(key);
+                nilaiData.push(value.nilai);
+                targetData.push(value.bobot);
 
                 // Menambahkan warna acak untuk setiap bar
-                backgroundColors.push(getRandomColor());
+                nilaiColors.push(getRandomColor());
+                targetColors.push(getRandomColor());
             }
 
             // Fungsi untuk menghasilkan warna acak
@@ -162,11 +168,18 @@
             const chartData = {
                 labels: labels,
                 datasets: [{
-                    label: 'Nilai CPL', // Menggunakan label umum untuk dataset
-                    backgroundColor: backgroundColors,
-                    borderColor: backgroundColors,
-                    data: jumlahData,
-                }]
+                        label: 'Nilai CPL',
+                        backgroundColor: nilaiColors,
+                        borderColor: nilaiColors,
+                        data: nilaiData,
+                    },
+                    {
+                        label: 'Target CPL',
+                        backgroundColor: targetColors,
+                        borderColor: targetColors,
+                        data: targetData,
+                    }
+                ]
             };
 
             // Chart config
@@ -177,13 +190,16 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Grafik Nilai Berdasarkan CPL'
+                            text: 'Grafik Nilai dan Target Berdasarkan CPL'
                         }
                     },
                     responsive: true,
                     scales: {
                         y: {
                             beginAtZero: true
+                        },
+                        x: {
+                            stacked: false
                         }
                     },
                     defaults: {

@@ -111,6 +111,13 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::post('/add-kurikulum', 'KurikulumController@store')->name('add-kurikulum');
             Route::post('/update-kurikulum/{params}', 'KurikulumController@update')->name('update-kurikulum');
             Route::delete('/delete-kurikulum/{params}', 'KurikulumController@delete')->name('delete-kurikulum');
+
+            Route::get('/kelas', 'KelasController@index')->name('kelas');
+            Route::get('/get-kelas', 'KelasController@get')->name('get-kelas');
+            Route::get('/show-kelas/{params}', 'KelasController@show')->name('show-kelas');
+            Route::post('/add-kelas', 'KelasController@store')->name('add-kelas');
+            Route::post('/update-kelas/{params}', 'KelasController@update')->name('update-kelas');
+            Route::delete('/delete-kelas/{params}', 'KelasController@delete')->name('delete-kelas');
         });
 
         Route::get('/cpl', 'CplProdiController@index')->name('cpl');

@@ -75,7 +75,7 @@ class NilaiCpmk extends BaseController
             foreach ($cpmk as $dataCpmk) {
                 $kodeCpmk = $dataCpmk->kode_cpmk;
                 if (!isset($item[$kodeCpmk])) {
-                    $item[$kodeCpmk] = null;
+                    $item[$kodeCpmk] = 0;
                 }
             }
         }

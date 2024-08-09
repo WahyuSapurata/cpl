@@ -238,20 +238,21 @@
             @endif
 
             @if ($role === 'operator')
-                <div class="menu-item menu-link-indention menu-accordion {{ $path[1] == 'data-master' ? 'show' : '' }}"
+                <div class="menu-item menu-link-indention menu-accordion {{ isset($path[1]) && $path[1] == 'data-master' ? 'show' : '' }}"
                     data-kt-menu-trigger="click">
                     <!--begin::Menu link-->
-                    <a href="#" class="menu-link py-3 {{ $path[1] == 'data-master' ? 'active' : '' }}">
+                    <a href="#"
+                        class="menu-link py-3 {{ isset($path[1]) && $path[1] == 'data-master' ? 'active' : '' }}">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
                             <span class="svg-icon svg-icon-2">
-                                <img src="{{ $path[1] == 'data-master' ? url('admin/assets/media/icons/aside/masterdataact.svg') : url('admin/assets/media/icons/aside/masterdatadef.svg') }}"
+                                <img src="{{ isset($path[1]) && $path[1] == 'data-master' ? url('admin/assets/media/icons/aside/masterdataact.svg') : url('admin/assets/media/icons/aside/masterdatadef.svg') }}"
                                     alt="">
                             </span>
                             <!--end::Svg Icon-->
                         </span>
                         <span class="menu-title"
-                            style="{{ $path[1] == 'data-master' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Data
+                            style="{{ isset($path[1]) && $path[1] == 'data-master' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Data
                             Master</span>
                         <span class="menu-arrow"></span>
                     </a>
@@ -326,6 +327,24 @@
                                 </span>
                                 <span class="menu-title"
                                     style="{{ isset($path[2]) && $path[2] === 'mahasiswa' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Mahasiswa</span>
+                            </a>
+                        </div>
+                        <!--end::Menu item-->
+
+                        <!--begin::Menu item-->
+                        <div class="menu-item pe-0">
+                            <a class="menu-link {{ isset($path[2]) && $path[2] === 'kelas' ? 'active' : '' }}"
+                                href="{{ route('operator.kelas') }}">
+                                <span class="menu-icon">
+                                    <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                                    <span class="svg-icon svg-icon-2">
+                                        <img src="{{ isset($path[2]) && $path[2] === 'kelas' ? url('admin/assets/media/icons/aside/kelasact.svg') : url('/admin/assets/media/icons/aside/kelasdef.svg') }}"
+                                            alt="">
+                                    </span>
+                                    <!--end::Svg Icon-->
+                                </span>
+                                <span class="menu-title"
+                                    style="{{ isset($path[2]) && $path[2] === 'kelas' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Kelas</span>
                             </a>
                         </div>
                         <!--end::Menu item-->

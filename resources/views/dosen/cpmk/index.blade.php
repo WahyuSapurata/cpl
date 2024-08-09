@@ -208,6 +208,36 @@
                         initDatatable(selectedUuid);
                         getCpmk(selectedUuid);
 
+                        $(document).on('submit', ".form-data", function(e) {
+                            e.preventDefault();
+                            let type = $(this).attr('data-type');
+                            if (type == 'add') {
+                                control.submitFormMultipartData('/dosen/add-cpmk', 'Tambah',
+                                    'CPMK',
+                                    'POST');
+                                getCpmk(selectedUuid);
+                            } else {
+                                let uuid = $("input[name='uuid']").val();
+                                control.submitFormMultipartData('/dosen/update-cpmk/' + uuid,
+                                    'Update',
+                                    'CPMK', 'POST');
+                                getCpmk(selectedUuid);
+                            }
+                        });
+
+                        $(document).on('click', '.button-update', function(e) {
+                            e.preventDefault();
+                            let url = '/dosen/show-cpmk/' + $(this).attr('data-uuid');
+                            control.overlay_form('Update', 'CPMK', url);
+                        })
+
+                        $(document).on('click', '.button-delete', function(e) {
+                            e.preventDefault();
+                            let url = '/dosen/delete-cpmk/' + $(this).attr('data-uuid');
+                            let label = $(this).attr('data-label');
+                            control.ajaxDelete(url, label)
+                        })
+
                     });
 
                 } else {
@@ -221,34 +251,6 @@
 
         $(document).on('click', '#button-side-form', function() {
             control.overlay_form('Tambah', 'CPMK');
-        })
-
-        $(document).on('submit', ".form-data", function(e) {
-            e.preventDefault();
-            let type = $(this).attr('data-type');
-            if (type == 'add') {
-                control.submitFormMultipartData('/dosen/add-cpmk', 'Tambah',
-                    'CPMK',
-                    'POST');
-            } else {
-                let uuid = $("input[name='uuid']").val();
-                control.submitFormMultipartData('/dosen/update-cpmk/' + uuid,
-                    'Update',
-                    'CPMK', 'POST');
-            }
-        });
-
-        $(document).on('click', '.button-update', function(e) {
-            e.preventDefault();
-            let url = '/dosen/show-cpmk/' + $(this).attr('data-uuid');
-            control.overlay_form('Update', 'CPMK', url);
-        })
-
-        $(document).on('click', '.button-delete', function(e) {
-            e.preventDefault();
-            let url = '/dosen/delete-cpmk/' + $(this).attr('data-uuid');
-            let label = $(this).attr('data-label');
-            control.ajaxDelete(url, label)
         })
 
         $(document).on('keyup', '#search_', function(e) {
@@ -356,6 +358,7 @@
                     $.each(res.data, function(x, y) {
                         hasil += parseFloat(y.bobot);
                     });
+
                     if (hasil == 100) {
                         $('#alert-bobot').html(
                             `

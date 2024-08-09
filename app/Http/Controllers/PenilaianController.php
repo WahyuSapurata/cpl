@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePenilaianRequest;
 use App\Http\Requests\UpdatePenilaianRequest;
+use App\Models\Cpmk;
+use App\Models\Kelas;
 use App\Models\Mahasiswa;
+use App\Models\MataKuliah;
 use App\Models\Penilaian;
 use App\Models\SubCpmk;
 use Illuminate\Http\Request;
@@ -19,15 +22,15 @@ class PenilaianController extends BaseController
 
     public function get(Request $request)
     {
-        // Mendapatkan tahun ajaran dari permintaan
-        $tahun_ajaran = $request->tahun_ajaran;
+        $module = 'Penilaian';
 
-        // Mengambil data SubCpmk berdasarkan uuid_matkul dan uuid_cpmk dari request
-        $subCpmks = SubCpmk::where('uuid_matkul', $request->matkul)
-            ->where('uuid_cpmk', $request->cpmk)
+        $matkul_user = MataKuliah::where('uuid_dosen', auth()->user()->uuid)->get();
+        $cpmk = Cpmk::where('uuid_matkul', $request->uuid_matkul)->get();
+
+        $subCpmks = SubCpmk::where('uuid_matkul', $request->uuid_matkul)
+            ->where('uuid_cpmk', $request->uuid_cpmk)
             ->get();
 
-        // Mendapatkan teknik_penilaian dan uuid_sub_cpmk
         $teknikPenilaian = $subCpmks->map(function ($subCpmk) {
             return [
                 'uuid' => $subCpmk->uuid,
@@ -35,124 +38,54 @@ class PenilaianController extends BaseController
             ];
         })->unique('teknik_penilaian')->values();
 
-        // Mengambil uuid_sub_cpmks untuk query Penilaian
-        $subCpmkUuids = $subCpmks->pluck('uuid');
+        $kelas = Kelas::where('uuid_matkul', $request->uuid_matkul)
+            ->where('tahun_ajaran', $request->tahun_ajaran)
+            ->get();
+        $mahasiswa_list = $kelas->map(function ($item) {
+            $mahasiswa = Mahasiswa::where('uuid', $item->uuid_mahasiswa)->first();
 
-        // Mengambil data penilaian yang sesuai dengan uuid_sub_cpmks dan tahun ajaran
-        $penilaian = Penilaian::whereIn('uuid_sub_cpmks', $subCpmkUuids)
-            ->where('tahun_ajaran', $tahun_ajaran)
-            ->get()
-            ->groupBy('uuid_sub_cpmks');
+            $item->uuid_mahasiswa = $mahasiswa->uuid;
+            $item->mahasiswa = $mahasiswa->nama;
 
-        // Memproses setiap item dalam koleksi data SubCpmk
-        $dataCombined = $subCpmks->map(function ($subCpmk) use ($penilaian) {
-            $uuid = $subCpmk->uuid;
+            return $item;
+        });
 
-            // Mengambil data penilaian yang sesuai dengan uuid_sub_cpmks
-            $penilaianForSubCpmk = $penilaian->get($uuid, collect());
-
-            // Membuat array dengan teknik_penilaian, nama_mahasiswa, dan nilai
-            $results = $penilaianForSubCpmk->map(function ($item) use ($subCpmk) {
-                $mahasiswa = Mahasiswa::where('uuid', $item->uuid_mahasiswa)->first();
-                // Periksa apakah nilai null sebelum menambahkannya ke array
-                if ($item->nilai !== null) {
-                    return [
-                        'uuid' => $item->uuid,
-                        'nama_mahasiswa' => $mahasiswa ? $mahasiswa->nama : null,
-                        $subCpmk->teknik_penilaian => $item->nilai,
-                    ];
-                }
-            })->filter(); // Filter hasil untuk menghapus nilai null
-
-            return $results->isEmpty() ? null : $results;
-        })->filter(); // Filter hasil untuk menghapus nilai null
-
-        // Mengembalikan response berdasarkan data yang sudah disaring
-        return $this->sendResponse([
-            'data' => $dataCombined->flatten(1), // Menggabungkan hasil ke dalam satu larik
-            'teknik_penilaian' => $teknikPenilaian,
-        ], 'Get data success');
+        return view('dosen.penilaian.nilai', compact('module', 'matkul_user', 'cpmk', 'teknikPenilaian', 'mahasiswa_list'));
     }
 
-    public function store(StorePenilaianRequest $storePenilaianRequest)
+    public function update(Request $request)
     {
-        $uuid_sub_cpmks = $storePenilaianRequest->uuid_sub_cpmks;
-        $data_nilai = $storePenilaianRequest->nilai;
-        try {
-            foreach ($uuid_sub_cpmks as $index => $uuid) {
-                $data = new Penilaian();
-                $data->uuid_mahasiswa = $storePenilaianRequest->uuid_mahasiswa;
-                $data->uuid_sub_cpmks = $uuid;
+        $uuid_mahasiswa = $request->uuid_mahasiswa;
+        $uuid_sub_cpmks = $request->uuid_sub_cpmks;
+        $data_nilai = $request->nilai;
+        $tahun_ajaran = $request->tahun_ajaran;
+
+        // Asumsi bahwa jumlah elemen di $uuid_mahasiswa sama dengan $uuid_sub_cpmks dan $data_nilai
+        $jumlah_mahasiswa = count($uuid_mahasiswa);
+
+        for ($i = 0; $i < $jumlah_mahasiswa; $i++) {
+            for ($j = 0; $j < count($uuid_sub_cpmks) / $jumlah_mahasiswa; $j++) {
+                $index = $i * (count($uuid_sub_cpmks) / $jumlah_mahasiswa) + $j;
+
+                // Periksa apakah penilaian sudah ada untuk kombinasi UUID mahasiswa dan UUID sub CPMK
+                $data = Penilaian::where('uuid_mahasiswa', $uuid_mahasiswa[$i])
+                    ->where('uuid_sub_cpmks', $uuid_sub_cpmks[$index])
+                    ->where('tahun_ajaran', $tahun_ajaran)
+                    ->first();
+
+                if (!$data) {
+                    $data = new Penilaian();
+                    $data->uuid_mahasiswa = $uuid_mahasiswa[$i];
+                    $data->uuid_sub_cpmks = $uuid_sub_cpmks[$index];
+                    $data->tahun_ajaran = $tahun_ajaran;
+                }
+
                 $data->nilai = $data_nilai[$index];
-                $data->tahun_ajaran = $storePenilaianRequest->tahun_ajaran;
                 $data->save();
             }
-        } catch (\Exception $e) {
-            return $this->sendError($e->getMessage(), $e->getMessage(), 400);
-        }
-        return $this->sendResponse('success', 'Added data success');
-    }
-
-    public function show(Request $request)
-    {
-        try {
-            // Temukan Penilaian berdasarkan uuid yang diberikan dalam request
-            $penilaian = Penilaian::where('uuid', $request->uuid)->first();
-
-            // Jika Penilaian tidak ditemukan, kembalikan respons error
-            if (!$penilaian) {
-                return $this->sendError('Penilaian not found', 'Penilaian with the specified UUID does not exist', 404);
-            }
-
-            // Temukan Mahasiswa berdasarkan uuid yang terkait dengan Penilaian
-            $mahasiswa = Mahasiswa::where('uuid', $penilaian->uuid_mahasiswa)->first();
-
-            // Jika Mahasiswa tidak ditemukan, kembalikan respons error
-            if (!$mahasiswa) {
-                return $this->sendError('Mahasiswa not found', 'Mahasiswa with the specified UUID does not exist', 404);
-            }
-
-            // Temukan data penilaian berdasarkan uuid_sub_cpmks dan uuid_mahasiswa
-            $dataFull = Penilaian::whereIn('uuid_sub_cpmks', $request->uuid_sub_cpmks)
-                ->where('uuid_mahasiswa', $mahasiswa->uuid)
-                ->get();
-
-            // Menggabungkan nilai berdasarkan uuid_mahasiswa
-            $groupedData = $dataFull->groupBy('uuid_mahasiswa')->map(function ($group) {
-                return [
-                    'uuid_mahasiswa' => $group->first()->uuid_mahasiswa,
-                    'nilai' => $group->pluck('nilai')->toArray(),
-                ];
-            })->first(); // Ambil data pertama karena hanya ingin satu data
-
-            // Contoh respons, sesuaikan dengan kebutuhan Anda
-            return $this->sendResponse($groupedData, 'Show data success');
-        } catch (\Exception $e) {
-            return $this->sendError($e->getMessage(), $e->getMessage(), 400);
-        }
-    }
-
-    public function update(StorePenilaianRequest $storePenilaianRequest)
-    {
-        try {
-            // Ambil data dari request
-            $data = $storePenilaianRequest->all();
-
-            // Temukan data penilaian berdasarkan UUID mahasiswa dan UUID sub cpmks
-            $penilaian = Penilaian::where('uuid_mahasiswa', $data['uuid_mahasiswa'])
-                ->whereIn('uuid_sub_cpmks', $data['uuid_sub_cpmks'])
-                ->get();
-
-            // Perbarui nilai pada data penilaian
-            foreach ($penilaian as $key => $value) {
-                $value->nilai = $data['nilai'][$key];
-                $value->save();
-            }
-        } catch (\Exception $e) {
-            return $this->sendError($e->getMessage(), $e->getMessage(), 400);
         }
 
-        return $this->sendResponse($data, 'Update data success');
+        return redirect()->back()->with('success', 'Data penilaian berhasil diperbarui.');
     }
 
     public function delete($params)
