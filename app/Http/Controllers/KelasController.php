@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateKelasRequest;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
+use Illuminate\Http\Request;
 
 class KelasController extends BaseController
 {
@@ -16,10 +17,13 @@ class KelasController extends BaseController
         return view('operator.kelas.index', compact('module'));
     }
 
-    public function get()
+    public function get(Request $request)
     {
         // Mengambil semua data pengguna
-        $dataFull = Kelas::all();
+        $dataFull = Kelas::where('uuid_matkul', $request->matkul)
+            ->where('tahun_ajaran', $request->tahun_ajaran)
+            ->where('kelas', $request->kelas)
+            ->get();
         $dataFull->map(function ($item) {
             $mahasiswa = Mahasiswa::where('uuid', $item->uuid_mahasiswa)->first();
             $matkul = MataKuliah::where('uuid', $item->uuid_matkul)->first();

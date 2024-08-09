@@ -6,18 +6,12 @@
             data-kt-swapper-parent="{default: '#kt_content_container', 'lg': '#kt_toolbar_container'}"
             class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
             <!--begin::Title-->
-            <button class="btn btn-primary btn-sm " data-kt-drawer-show="true" data-kt-drawer-target="#side_form"
+            <button class="btn btn-primary btn-sm disabled" data-kt-drawer-show="true" data-kt-drawer-target="#side_form"
                 id="button-side-form"><i class="fa fa-plus-circle" style="color:#ffffff" aria-hidden="true"></i> Tambah
                 Data</button>
             <!--end::Title-->
         </div>
         <!--end::Page title-->
-        <!--begin::Actions-->
-        {{-- <div class="d-flex align-items-center gap-2 gap-lg-3">
-            <a href="#" data-type="excel" class="btn btn-sm btn-success export">Export Excel</a>
-            <a href="#" data-type="pdf" class="btn btn-sm btn-danger export">Cetak Laporan</a>
-        </div> --}}
-        <!--end::Actions-->
     </div>
 @endsection
 @section('content')
@@ -25,6 +19,37 @@
         <!--begin::Container-->
         <div id="kt_content_container" class="container">
             <div class="row">
+
+                <div class="row justify-content-center">
+                    <div class="card mb-5 py-3 w-50">
+                        <form>
+                            <div class="mb-10">
+                                <label class="form-label">Mata Kuliah</label>
+                                <select name="uuid_matkul" class="form-select" data-control="select2"
+                                    id="from_select_matkul" data-placeholder="Pilih jenis inputan">
+                                </select>
+                                <small class="text-danger uuid_matkul_error"></small>
+                            </div>
+
+                            <div class="mb-10">
+                                <label class="form-label">Tahun Ajaran</label>
+                                <select name="tahun_ajaran" class="form-select" data-control="select2"
+                                    id="from_select_tahun_ajaran" data-placeholder="Pilih">
+                                </select>
+                                <small class="text-danger tahun_ajaran_error"></small>
+                            </div>
+
+                            <div class="mb-10">
+                                <label class="form-label">Kelas</label>
+                                <input type="text" id="kelas" class="form-control" name="kelas">
+                                <small class="text-danger kelas_error"></small>
+                            </div>
+                            <div class="d-flex my-5">
+                                <button class="btn btn-primary btn-sm " id="button-cari"></i>Cari Data</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
                 <div class="card">
                     <div class="card-body p-0">
@@ -106,33 +131,15 @@
 
                     <div class="mb-10">
                         <label class="form-label">Nama Mahasiswa</label>
-                        <select name="uuid_mahasiswa" class="form-select" data-control="select2" id="from_select_mahasiswa"
-                            data-placeholder="Pilih jenis inputan">
+                        <select name="uuid_mahasiswa" class="form-select" data-control="select2"
+                            id="from_select_mahasiswa" data-placeholder="Pilih jenis inputan">
                         </select>
                         <small class="text-danger uuid_mahasiswa_error"></small>
                     </div>
 
-                    <div class="mb-10">
-                        <label class="form-label">Mata Kuliah</label>
-                        <select name="uuid_matkul" class="form-select" data-control="select2" id="from_select_matkul"
-                            data-placeholder="Pilih jenis inputan">
-                        </select>
-                        <small class="text-danger uuid_matkul_error"></small>
-                    </div>
-
-                    <div class="mb-10">
-                        <label class="form-label">Kelas</label>
-                        <input type="text" id="kelas" class="form-control" name="kelas">
-                        <small class="text-danger kelas_error"></small>
-                    </div>
-
-                    <div class="mb-10">
-                        <label class="form-label">Tahun Ajaran</label>
-                        <select name="tahun_ajaran" class="form-select" data-control="select2" id="from_select_tahun_ajaran"
-                            data-placeholder="Pilih">
-                        </select>
-                        <small class="text-danger tahun_ajaran_error"></small>
-                    </div>
+                    <input type="hidden" name="uuid_matkul">
+                    <input type="hidden" name="kelas">
+                    <input type="hidden" name="tahun_ajaran">
 
                     <div class="separator separator-dashed mt-8 mb-5"></div>
                     <div class="d-flex gap-5">
@@ -186,12 +193,36 @@
             control.ajaxDelete(url, label)
         })
 
+        $(document).ready(function() {
+            $(document).on('click', '#button-cari', function(e) {
+                e.preventDefault(); // Menghentikan pengiriman form standar
+
+                $('#button-side-form').removeClass('disabled');
+
+                const matkul = $('#from_select_matkul').val();
+                const tahun_ajaran = $('#from_select_tahun_ajaran').val();
+                const kelas = $('#kelas').val();
+
+                $("input[name='uuid_matkul']").val(matkul);
+                $("input[name='kelas']").val(kelas);
+                $("input[name='tahun_ajaran']").val(tahun_ajaran);
+
+                const data = {
+                    'matkul': matkul,
+                    'tahun_ajaran': tahun_ajaran,
+                    'kelas': kelas
+                };
+
+                initDatatable(data);
+            });
+        });
+
         $(document).on('keyup', '#search_', function(e) {
             e.preventDefault();
             control.searchTable(this.value);
         })
 
-        const initDatatable = async () => {
+        const initDatatable = async (data) => {
             // Destroy existing DataTable if it exists
             if ($.fn.DataTable.isDataTable('#kt_table_data')) {
                 $('#kt_table_data').DataTable().clear().destroy();
@@ -207,7 +238,12 @@
                     [0, 'asc']
                 ],
                 processing: true,
-                ajax: '/operator/data-master/get-kelas',
+                ajax: {
+                    url: '/operator/data-master/get-kelas',
+                    type: 'GET',
+                    data: data
+                },
+                data: data,
                 columns: [{
                     data: null,
                     render: function(data, type, row, meta) {
@@ -292,7 +328,6 @@
             control.push_select_mahasiswa('/operator/data-master/get-mahasiswa', '#from_select_mahasiswa');
             control.push_select_mk('/operator/data-master/get-mata-kuliah', '#from_select_matkul');
             control.push_select_data(data, '#from_select_tahun_ajaran');
-            initDatatable();
         });
     </script>
 @endsection

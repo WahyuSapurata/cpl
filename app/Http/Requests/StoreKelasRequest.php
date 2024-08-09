@@ -23,9 +23,6 @@ class StoreKelasRequest extends FormRequest
     {
         return [
             'uuid_mahasiswa' => 'required',
-            'uuid_matkul' => 'required',
-            'kelas' => 'required',
-            'tahun_ajaran' => 'required',
         ];
     }
 
@@ -33,9 +30,6 @@ class StoreKelasRequest extends FormRequest
     {
         return [
             'uuid_mahasiswa.required' => 'Kolom mahasiswa harus di isi.',
-            'uuid_matkul.required' => 'Kolom mata kuliah harus di isi.',
-            'kelas.required' => 'Kolom kelas harus di isi.',
-            'tahun_ajaran.required' => 'Kolom tahun ajaran harus di isi.',
         ];
     }
 }
