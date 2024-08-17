@@ -134,7 +134,7 @@
 
             // Mengiterasi objek data
             for (const [key, value] of Object.entries(data)) {
-                labels.push(value.kode_cpl + ' Target ' + value.total_bobot + '%');
+                labels.push(value.kode_cpl + ' Target ' + '70' + '%');
                 jumlahData.push(value.nilai);
                 nilaiBobot.push(value.total_bobot);
 

@@ -105,44 +105,28 @@
             var labels = [];
             var nilaiData = [];
             var targetData = [];
-            var nilaiColors = [];
-            var targetColors = [];
 
             // Mengiterasi objek data
             for (const [key, value] of Object.entries(data)) {
                 labels.push(key);
                 nilaiData.push(value.nilai);
-                targetData.push(value.bobot);
-
-                // Menambahkan warna acak untuk setiap bar
-                nilaiColors.push(getRandomColor());
-                targetColors.push(getRandomColor());
-            }
-
-            // Fungsi untuk menghasilkan warna acak
-            function getRandomColor() {
-                var letters = '0123456789ABCDEF';
-                var color = '#';
-                for (var i = 0; i < 6; i++) {
-                    color += letters[Math.floor(Math.random() * 16)];
-                }
-                return color;
+                targetData.push(70); // Nilai target tetap 70 untuk setiap label
             }
 
             // Chart data
             const chartData = {
                 labels: labels,
                 datasets: [{
-                        label: 'Nilai CPL',
-                        backgroundColor: nilaiColors,
-                        borderColor: nilaiColors,
-                        data: nilaiData,
+                        label: 'Target CPL',
+                        backgroundColor: 'rgba(255, 0, 0, 0.7)', // Warna merah dengan transparansi
+                        borderColor: 'rgba(255, 0, 0, 1)', // Warna merah tanpa transparansi
+                        data: targetData, // Target tetap 70
                     },
                     {
-                        label: 'Target CPL',
-                        backgroundColor: targetColors,
-                        borderColor: targetColors,
-                        data: targetData,
+                        label: 'Nilai CPL',
+                        backgroundColor: 'rgba(0, 255, 0, 0.7)', // Warna hijau dengan transparansi
+                        borderColor: 'rgba(0, 255, 0, 1)', // Warna hijau tanpa transparansi
+                        data: nilaiData, // Nilai CPL yang diambil dari data
                     }
                 ]
             };
