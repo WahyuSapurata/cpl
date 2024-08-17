@@ -38,6 +38,32 @@ class KelasController extends BaseController
         return $this->sendResponse($dataFull, 'Get data success');
     }
 
+    public function get_kelas(Request $request)
+    {
+        // Mengambil semua data kelas berdasarkan tahun ajaran
+        $dataFull = Kelas::where('tahun_ajaran', $request->tahun_ajaran)
+            ->get();
+
+        // Maping data dengan informasi tambahan dari tabel MataKuliah
+        $dataFull->map(function ($item) {
+            $matkul = MataKuliah::where('uuid', $item->uuid_matkul)->first();
+
+            $item->matkul = $matkul->mata_kuliah;
+            $item->uuid_user = $matkul->uuid_dosen;
+
+            return $item;
+        });
+
+        // Filter berdasarkan UUID pengguna yang sedang login
+        $dataFiltered = $dataFull->where('uuid_user', auth()->user()->uuid);
+
+        // Hilangkan duplikasi berdasarkan uuid_matkul
+        $dataUnique = $dataFiltered->unique('uuid_matkul')->values();
+
+        // Mengembalikan response berdasarkan data yang sudah disaring dan unik
+        return $this->sendResponse($dataUnique, 'Get data success');
+    }
+
     public function store(StoreKelasRequest $storeKelasRequest)
     {
         $data = array();

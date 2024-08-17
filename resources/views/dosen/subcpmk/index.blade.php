@@ -22,31 +22,6 @@
     @endsection
 @endif
 @section('content')
-    <!-- Button trigger modal -->
-    <button type="button" id="button-matakul" class="btn btn-primary d-none" data-bs-toggle="modal"
-        data-bs-target="#staticBackdrop_modal">
-        Launch static backdrop modal
-    </button>
-
-    <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Pilih Mata Kuliah Terlebih Dahulu</h1>
-                    {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --}}
-                </div>
-                <div class="modal-body">
-                    <select name="mata_kuliah" class="form-select" data-control="select2" id="mata_kuliah_select"
-                        data-dropdown-parent="#staticBackdrop_modal" data-allow-clear="true"
-                        data-placeholder="Pilih jenis mata kuliah">
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="post d-flex flex-column-fluid" id="kt_post">
         <!--begin::Container-->
         <div id="kt_content_container" class="container">
@@ -57,11 +32,11 @@
                         <table>
                             <tr>
                                 <td>Mata Kuliah</td>
-                                <td>: <span id="mata_kuliah"></span></td>
+                                <td>: {{ $mata_kuliah->mata_kuliah }}</td>
                             </tr>
                             <tr>
                                 <td>Kode</td>
-                                <td>: <span id="kode_mk"></span></td>
+                                <td>: {{ $mata_kuliah->kode_mk }}</td>
                             </tr>
                         </table>
                     </div>
@@ -79,7 +54,6 @@
                                             <th>Kode CPMK</th>
                                             <th>Nama Sub</th>
                                             <th>Deskripsi</th>
-                                            <th>Indikator</th>
                                             <th>Bobot (%)</th>
                                             @if (auth()->user()->role != 'kajur' && auth()->user()->role != 'lpm')
                                                 <th>Aksi</th>
@@ -170,12 +144,6 @@
                     </div>
 
                     <div class="mb-10">
-                        <label class="form-label">Indikator</label>
-                        <input type="text" id="teknik_penilaian" class="form-control" name="teknik_penilaian">
-                        <small class="text-danger teknik_penilaian_error"></small>
-                    </div>
-
-                    <div class="mb-10">
                         <label class="form-label">Bobot <span style="font-style: italic; color: #EA443E"
                                 id="cpmk"></span></label>
                         <input type="number" id="bobot" class="form-control" name="bobot">
@@ -203,145 +171,110 @@
         let control = new Control();
 
         $(document).ready(async function() {
-            // Simulasikan klik pada tombol dengan ID 'autoClickButton'
-            $('#button-matakul').click();
 
-            try {
-                const res = await $.ajax({
-                    url: '/dosen/get-matkul-by-user',
-                    method: 'GET'
-                });
+            let selectedUuid = @json($mata_kuliah->uuid);;
 
-                if (res.success === true) {
-                    $('#mata_kuliah_select').html("");
-                    let html = "<option></option>";
+            $('#uuid_matkul').val(selectedUuid);
+
+            initDatatable(selectedUuid);
+
+            $.ajax({
+                url: '/dosen/get-cpmk-by-matkul/' + selectedUuid,
+                method: "GET",
+                success: function(res) {
+                    $('#from_select_cpmk').html("");
+                    let html = "<option selected disabled>Pilih</option>";
                     $.each(res.data, function(x, y) {
-                        html += `<option value="${y.uuid}">${y.mata_kuliah}</option>`;
+                        html +=
+                            `<option value="${y.uuid}">${y.kode_cpmk}</option>`;
                     });
-                    $('#mata_kuliah_select').html(html);
+                    $('#from_select_cpmk').html(html);
 
-                    // Menanggapi perubahan pada elemen select
-                    $('#mata_kuliah_select').on('change', function() {
-                        let selectedUuid = $(this).val();
-
-                        $('#uuid_matkul').val(selectedUuid);
-
-                        $('#staticBackdrop_modal').modal('hide');
-
-                        initDatatable(selectedUuid);
-
-                        $.each(res.data, function(x, y) {
-                            if (y.uuid === selectedUuid) {
-                                $('#mata_kuliah').text(y.mata_kuliah);
-                                $('#kode_mk').text(y.kode_mk);
-                            }
-                        });
+                    $('#from_select_cpmk').on('change', function() {
+                        let selectedCpmk = $(this).val();
 
                         $.ajax({
-                            url: '/dosen/get-cpmk-by-matkul/' + selectedUuid,
+                            url: '/dosen/get-subcpmk/' +
+                                selectedUuid,
                             method: "GET",
-                            success: function(res) {
-                                $('#from_select_cpmk').html("");
-                                let html = "<option selected disabled>Pilih</option>";
-                                $.each(res.data, function(x, y) {
-                                    html +=
-                                        `<option value="${y.uuid}">${y.kode_cpmk}</option>`;
-                                });
-                                $('#from_select_cpmk').html(html);
-
-                                $('#from_select_cpmk').on('change', function() {
-                                    let selectedCpmk = $(this).val();
-
-                                    $.ajax({
-                                        url: '/dosen/get-subcpmk/' +
-                                            selectedUuid,
-                                        method: "GET",
-                                        success: function(resSub) {
-                                            let hasil = 0;
-                                            $.each(resSub.data,
-                                                function(
-                                                    index, subcpmk
-                                                ) {
-                                                    if (subcpmk
-                                                        .uuid_cpmk ===
-                                                        selectedCpmk
-                                                    ) {
-                                                        hasil +=
-                                                            parseFloat(
-                                                                subcpmk
-                                                                .bobot
-                                                            );
-                                                    }
-                                                });
-
-                                            $.each(res.data, function(
-                                                index, cpmk
-                                            ) {
-                                                if (cpmk
-                                                    .uuid ===
-                                                    selectedCpmk
-                                                ) {
-                                                    if (hasil ==
-                                                        cpmk
-                                                        .bobot
-                                                    ) {
-                                                        $('#cpmk')
-                                                            .text(
-                                                                cpmk
-                                                                .kode_cpmk +
-                                                                ' sudah mencapai ' +
-                                                                hasil +
-                                                                '%'
-                                                            );
-                                                        $("#bobot")
-                                                            .prop(
-                                                                "readonly",
-                                                                true
-                                                            );
-                                                    } else {
-                                                        $('#cpmk')
-                                                            .text(
-                                                                'masih membutuhkan ' +
-                                                                (cpmk
-                                                                    .bobot -
-                                                                    hasil
-                                                                ) +
-                                                                '% dari ' +
-                                                                cpmk
-                                                                .bobot +
-                                                                '% ' +
-                                                                cpmk
-                                                                .kode_cpmk
-                                                            );
-                                                        $("#bobot")
-                                                            .prop(
-                                                                "readonly",
-                                                                false
-                                                            );
-                                                    }
-                                                }
-                                            });
-                                        },
-                                        error: function(xhr) {
-                                            alert(
-                                                "Gagal mengambil data subcpmk"
-                                            );
-                                        },
+                            success: function(resSub) {
+                                let hasil = 0;
+                                $.each(resSub.data,
+                                    function(
+                                        index, subcpmk
+                                    ) {
+                                        if (subcpmk
+                                            .uuid_cpmk ===
+                                            selectedCpmk
+                                        ) {
+                                            hasil +=
+                                                parseFloat(
+                                                    subcpmk
+                                                    .bobot
+                                                );
+                                        }
                                     });
+
+                                $.each(res.data, function(
+                                    index, cpmk
+                                ) {
+                                    if (cpmk
+                                        .uuid ===
+                                        selectedCpmk
+                                    ) {
+                                        if (hasil ==
+                                            cpmk
+                                            .bobot
+                                        ) {
+                                            $('#cpmk')
+                                                .text(
+                                                    cpmk
+                                                    .kode_cpmk +
+                                                    ' sudah mencapai ' +
+                                                    hasil +
+                                                    '%'
+                                                );
+                                            $("#bobot")
+                                                .prop(
+                                                    "readonly",
+                                                    true
+                                                );
+                                        } else {
+                                            $('#cpmk')
+                                                .text(
+                                                    'masih membutuhkan ' +
+                                                    (cpmk
+                                                        .bobot -
+                                                        hasil
+                                                    ) +
+                                                    '% dari ' +
+                                                    cpmk
+                                                    .bobot +
+                                                    '% ' +
+                                                    cpmk
+                                                    .kode_cpmk
+                                                );
+                                            $("#bobot")
+                                                .prop(
+                                                    "readonly",
+                                                    false
+                                                );
+                                        }
+                                    }
                                 });
                             },
                             error: function(xhr) {
-                                alert("gagal");
+                                alert(
+                                    "Gagal mengambil data subcpmk"
+                                );
                             },
                         });
                     });
-
-                } else {
-                    console.error('Gagal mengambil data:', res.message);
-                }
-            } catch (error) {
-                console.error('Gagal melakukan permintaan AJAX:', error);
-            }
+                },
+                error: function(xhr) {
+                    alert("gagal");
+                },
+            });
         });
 
         $(document).on('click', '#button-side-form', function() {
@@ -413,9 +346,6 @@
                     }, {
                         data: 'deskripsi',
                     }, {
-                        data: 'teknik_penilaian',
-                        className: 'text-center',
-                    }, {
                         data: 'bobot',
                         className: 'text-center',
                         render: function(data, type, row, meta) {
@@ -471,7 +401,5 @@
                 },
             });
         };
-
-        $(function() {});
     </script>
 @endsection

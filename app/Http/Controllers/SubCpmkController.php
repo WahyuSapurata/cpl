@@ -12,10 +12,11 @@ use App\Models\User;
 
 class SubCpmkController extends BaseController
 {
-    public function index()
+    public function index($params)
     {
+        $mata_kuliah = MataKuliah::where('uuid', $params)->first();
         $module = 'Sub CPMK';
-        return view('dosen.subcpmk.index', compact('module'));
+        return view('dosen.subcpmk.index', compact('module', 'mata_kuliah'));
     }
 
     public function operator()
@@ -63,7 +64,6 @@ class SubCpmkController extends BaseController
             $data->uuid_cpmk = $storeSubCpmkRequest->uuid_cpmk;
             $data->nama_sub = $storeSubCpmkRequest->nama_sub;
             $data->deskripsi = $storeSubCpmkRequest->deskripsi;
-            $data->teknik_penilaian = $storeSubCpmkRequest->teknik_penilaian;
             $data->bobot = $storeSubCpmkRequest->bobot;
             $data->save();
         } catch (\Exception $e) {
@@ -92,7 +92,6 @@ class SubCpmkController extends BaseController
             $data->uuid_cpmk = $storeSubCpmkRequest->uuid_cpmk;
             $data->nama_sub = $storeSubCpmkRequest->nama_sub;
             $data->deskripsi = $storeSubCpmkRequest->deskripsi;
-            $data->teknik_penilaian = $storeSubCpmkRequest->teknik_penilaian;
             $data->bobot = $storeSubCpmkRequest->bobot;
             $data->save();
         } catch (\Exception $e) {

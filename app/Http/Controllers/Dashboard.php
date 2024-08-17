@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\CplProdi;
 use App\Models\Cpmk;
+use App\Models\Kelas;
 use App\Models\Mahasiswa;
+use App\Models\MataKuliah;
 use App\Models\Penilaian;
 use App\Models\SubCpmk;
 use Illuminate\Http\Request;
@@ -17,6 +19,14 @@ class Dashboard extends BaseController
             return redirect()->back();
         }
         return redirect()->route('login.login-akun');
+    }
+
+    public function dashboard($params)
+    {
+        $kelas = Kelas::where('uuid', $params)->first();
+        $mata_kuliah = MataKuliah::where('uuid', $kelas->uuid_matkul)->first();
+        $module = 'Dashboard';
+        return view('dashboard.dashboard', compact('module', 'kelas', 'mata_kuliah'));
     }
 
     public function dashboard_admin()

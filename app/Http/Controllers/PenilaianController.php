@@ -24,19 +24,16 @@ class PenilaianController extends BaseController
     {
         $module = 'Penilaian';
 
-        $matkul_user = MataKuliah::where('uuid_dosen', auth()->user()->uuid)->get();
-        $cpmk = Cpmk::where('uuid_matkul', $request->uuid_matkul)->get();
-
         $subCpmks = SubCpmk::where('uuid_matkul', $request->uuid_matkul)
-            ->where('uuid_cpmk', $request->uuid_cpmk)
+            ->where('uuid_user', auth()->user()->uuid)
             ->get();
 
         $teknikPenilaian = $subCpmks->map(function ($subCpmk) {
             return [
                 'uuid' => $subCpmk->uuid,
-                'teknik_penilaian' => $subCpmk->teknik_penilaian
+                'teknik_penilaian' => $subCpmk->nama_sub
             ];
-        })->unique('teknik_penilaian')->values();
+        })->values();
 
         $kelas = Kelas::where('uuid_matkul', $request->uuid_matkul)
             ->where('tahun_ajaran', $request->tahun_ajaran)
@@ -50,7 +47,7 @@ class PenilaianController extends BaseController
             return $item;
         });
 
-        return view('dosen.penilaian.nilai', compact('module', 'matkul_user', 'cpmk', 'teknikPenilaian', 'mahasiswa_list'));
+        return view('dosen.penilaian.nilai', compact('module', 'teknikPenilaian', 'mahasiswa_list'));
     }
 
     public function update(Request $request)

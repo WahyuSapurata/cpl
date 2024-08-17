@@ -432,61 +432,6 @@
             @if ($role === 'dosen')
                 <!--begin::Menu item-->
                 <div class="menu-item">
-                    <a class="menu-link {{ isset($path[1]) && $path[1] === 'cpmk' ? 'active' : '' }}"
-                        href="{{ route('dosen.cpmk') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                            <span class="svg-icon svg-icon-2">
-                                <img src="{{ isset($path[1]) && $path[1] === 'cpmk' ? url('admin/assets/media/icons/aside/persetujuanpoact.svg') : url('/admin/assets/media/icons/aside/persetujuanpodef.svg') }}"
-                                    alt="">
-                            </span>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title"
-                            style="{{ isset($path[1]) && $path[1] === 'cpmk' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">CPMK</span>
-                    </a>
-                </div>
-                <!--end::Menu item-->
-
-                <!--begin::Menu item-->
-                <div class="menu-item">
-                    <a class="menu-link {{ isset($path[1]) && $path[1] === 'subcpmk' ? 'active' : '' }}"
-                        href="{{ route('dosen.subcpmk') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                            <span class="svg-icon svg-icon-2">
-                                <img src="{{ isset($path[1]) && $path[1] === 'subcpmk' ? url('admin/assets/media/icons/aside/persetujuanpoact.svg') : url('/admin/assets/media/icons/aside/persetujuanpodef.svg') }}"
-                                    alt="">
-                            </span>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title"
-                            style="{{ isset($path[1]) && $path[1] === 'subcpmk' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Sub
-                            CPMK</span>
-                    </a>
-                </div>
-                <!--end::Menu item-->
-
-                <!--begin::Menu item-->
-                <div class="menu-item">
-                    <a class="menu-link {{ isset($path[1]) && $path[1] === 'penilaian' ? 'active' : '' }}"
-                        href="{{ route('dosen.penilaian') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                            <span class="svg-icon svg-icon-2">
-                                <img src="{{ isset($path[1]) && $path[1] === 'penilaian' ? url('admin/assets/media/icons/aside/absenact.svg') : url('/admin/assets/media/icons/aside/absendef.svg') }}"
-                                    alt="">
-                            </span>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title"
-                            style="{{ isset($path[1]) && $path[1] === 'penilaian' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Penilaian</span>
-                    </a>
-                </div>
-                <!--end::Menu item-->
-
-                <!--begin::Menu item-->
-                <div class="menu-item">
                     <a class="menu-link {{ isset($path[1]) && $path[1] === 'nilai-cpmk' ? 'active' : '' }}"
                         href="{{ route('dosen.nilai-cpmk') }}">
                         <span class="menu-icon">

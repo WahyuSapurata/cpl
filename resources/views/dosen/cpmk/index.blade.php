@@ -22,30 +22,6 @@
     @endsection
 @endif
 @section('content')
-    <!-- Button trigger modal -->
-    <button type="button" id="button-matakul" class="btn btn-primary d-none" data-bs-toggle="modal"
-        data-bs-target="#staticBackdrop_modal">
-        Launch static backdrop modal
-    </button>
-
-    <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Pilih Mata Kuliah Terlebih Dahulu</h1>
-                    {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --}}
-                </div>
-                <div class="modal-body">
-                    <select name="mata_kuliah" class="form-select" data-control="select2" id="mata_kuliah_select"
-                        data-dropdown-parent="#staticBackdrop_modal" data-allow-clear="true"
-                        data-placeholder="Pilih jenis mata kuliah">
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="post d-flex flex-column-fluid" id="kt_post">
         <!--begin::Container-->
         <div id="kt_content_container" class="container">
@@ -180,74 +156,45 @@
         let control = new Control();
 
         $(document).ready(async function() {
-            // Simulasikan klik pada tombol dengan ID 'autoClickButton'
-            $('#button-matakul').click();
 
-            try {
-                const res = await $.ajax({
-                    url: '/dosen/get-matkul-by-user',
-                    method: 'GET'
-                });
+            let selectedUuid = @json($mata_kuliah->uuid);
 
-                if (res.success === true) {
-                    $('#mata_kuliah_select').html("");
-                    let html = "<option></option>";
-                    $.each(res.data, function(x, y) {
-                        html += `<option value="${y.uuid}">${y.mata_kuliah}</option>`;
-                    });
-                    $('#mata_kuliah_select').html(html);
+            $('#uuid_matkul').val(selectedUuid);
 
-                    // Menanggapi perubahan pada elemen select
-                    $('#mata_kuliah_select').on('change', function() {
-                        let selectedUuid = $(this).val();
+            initDatatable(selectedUuid);
+            getCpmk(selectedUuid);
 
-                        $('#uuid_matkul').val(selectedUuid);
-
-                        $('#staticBackdrop_modal').modal('hide');
-
-                        initDatatable(selectedUuid);
-                        getCpmk(selectedUuid);
-
-                        $(document).on('submit', ".form-data", function(e) {
-                            e.preventDefault();
-                            let type = $(this).attr('data-type');
-                            if (type == 'add') {
-                                control.submitFormMultipartData('/dosen/add-cpmk', 'Tambah',
-                                    'CPMK',
-                                    'POST');
-                                getCpmk(selectedUuid);
-                            } else {
-                                let uuid = $("input[name='uuid']").val();
-                                control.submitFormMultipartData('/dosen/update-cpmk/' + uuid,
-                                    'Update',
-                                    'CPMK', 'POST');
-                                getCpmk(selectedUuid);
-                            }
-                        });
-
-                        $(document).on('click', '.button-update', function(e) {
-                            e.preventDefault();
-                            let url = '/dosen/show-cpmk/' + $(this).attr('data-uuid');
-                            control.overlay_form('Update', 'CPMK', url);
-                        })
-
-                        $(document).on('click', '.button-delete', function(e) {
-                            e.preventDefault();
-                            let url = '/dosen/delete-cpmk/' + $(this).attr('data-uuid');
-                            let label = $(this).attr('data-label');
-                            control.ajaxDelete(url, label)
-                        })
-
-                    });
-
+            $(document).on('submit', ".form-data", function(e) {
+                e.preventDefault();
+                let type = $(this).attr('data-type');
+                if (type == 'add') {
+                    control.submitFormMultipartData('/dosen/add-cpmk', 'Tambah',
+                        'CPMK',
+                        'POST');
+                    getCpmk(selectedUuid);
                 } else {
-                    console.error('Gagal mengambil data:', res.message);
+                    let uuid = $("input[name='uuid']").val();
+                    control.submitFormMultipartData('/dosen/update-cpmk/' + uuid,
+                        'Update',
+                        'CPMK', 'POST');
+                    getCpmk(selectedUuid);
                 }
-            } catch (error) {
-                console.error('Gagal melakukan permintaan AJAX:', error);
-            }
-        });
+            });
 
+            $(document).on('click', '.button-update', function(e) {
+                e.preventDefault();
+                let url = '/dosen/show-cpmk/' + $(this).attr('data-uuid');
+                control.overlay_form('Update', 'CPMK', url);
+            })
+
+            $(document).on('click', '.button-delete', function(e) {
+                e.preventDefault();
+                let url = '/dosen/delete-cpmk/' + $(this).attr('data-uuid');
+                let label = $(this).attr('data-label');
+                control.ajaxDelete(url, label)
+            })
+
+        });
 
         $(document).on('click', '#button-side-form', function() {
             control.overlay_form('Tambah', 'CPMK');

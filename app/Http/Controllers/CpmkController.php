@@ -12,10 +12,11 @@ use App\Models\User;
 
 class CpmkController extends BaseController
 {
-    public function index()
+    public function index($params)
     {
+        $mata_kuliah = MataKuliah::where('uuid', $params)->first();
         $module = 'CPMK';
-        return view('dosen.cpmk.index', compact('module'));
+        return view('dosen.cpmk.index', compact('module', 'mata_kuliah'));
     }
 
     public function operator()

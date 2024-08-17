@@ -19,7 +19,6 @@ class SubCpmk extends Model
         'uuid_cpmk',
         'nama_sub',
         'deskripsi',
-        'teknik_penilaian',
         'bobot',
     ];
 

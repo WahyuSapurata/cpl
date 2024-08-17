@@ -19,7 +19,6 @@ return new class extends Migration
             $table->uuid('uuid_cpmk');
             $table->string('nama_sub');
             $table->string('deskripsi');
-            $table->string('teknik_penilaian');
             $table->string('bobot');
             $table->timestamps();
         });

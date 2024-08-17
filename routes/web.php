@@ -164,7 +164,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/dashboard-dosen', 'Dashboard@dashboard_dosen')->name('dashboard-dosen');
         Route::get('/get-nilai-cpl-user', 'Dashboard@get_nilai_cpl_user')->name('get-nilai-cpl-user');
 
-        Route::get('/cpmk', 'CpmkController@index')->name('cpmk');
+        Route::get('/dashboard/{params}', 'Dashboard@dashboard')->name('dashboard');
+
+        Route::get('/get-kelas', 'KelasController@get_kelas')->name('get-kelas');
+
+        Route::get('/cpmk/{params}', 'CpmkController@index')->name('cpmk');
         Route::get('/get-cpmk', 'CpmkController@get')->name('get-cpmk');
         Route::get('/get-cpmk-by-uuid-matkul/{params}', 'CpmkController@get_cpmk_by_uuid_matkul')->name('get-cpmk-by-uuid-matkul');
         Route::get('/show-cpmk/{params}', 'CpmkController@show')->name('show-cpmk');
@@ -172,7 +176,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/update-cpmk/{params}', 'CpmkController@update')->name('update-cpmk');
         Route::delete('/delete-cpmk/{params}', 'CpmkController@delete')->name('delete-cpmk');
 
-        Route::get('/subcpmk', 'SubCpmkController@index')->name('subcpmk');
+        Route::get('/subcpmk/{params}', 'SubCpmkController@index')->name('subcpmk');
         Route::get('/get-subcpmk/{params}', 'SubCpmkController@get')->name('get-subcpmk');
         Route::get('/show-subcpmk/{params}', 'SubCpmkController@show')->name('show-subcpmk');
         Route::post('/add-subcpmk', 'SubCpmkController@store')->name('add-subcpmk');

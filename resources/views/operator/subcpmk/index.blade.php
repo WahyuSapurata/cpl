@@ -57,7 +57,6 @@
                                             <th>Kode CPMK</th>
                                             <th>Nama Sub</th>
                                             <th>Deskripsi</th>
-                                            <th>Indikator</th>
                                             <th>Bobot (%)</th>
                                         </tr>
                                     </thead>
@@ -155,9 +154,6 @@
                     className: 'text-center',
                 }, {
                     data: 'deskripsi',
-                }, {
-                    data: 'teknik_penilaian',
-                    className: 'text-center',
                 }, {
                     data: 'bobot',
                     className: 'text-center',
