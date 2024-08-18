@@ -128,7 +128,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::delete('/delete-cpl/{params}', 'CplProdiController@delete')->name('delete-cpl');
 
         Route::get('/cpmk', 'CpmkController@operator')->name('cpmk');
+        Route::get('/detail-cpmk/{params}', 'CpmkController@detail')->name('detail-cpmk');
         Route::get('/subcpmk', 'SubCpmkController@operator')->name('subcpmk');
+        Route::get('/detail-sub/{params}', 'SubCpmkController@detail')->name('detail-sub');
 
         Route::get('/nilaicpl', 'NilaiCpl@operator')->name('nilaicpl');
         Route::get('/nilai', 'NilaiController@index')->name('nilai');
