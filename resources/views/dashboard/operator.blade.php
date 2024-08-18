@@ -122,41 +122,33 @@
         });
 
         function getGrafik(data) {
+            // Tampilkan grafik dan sembunyikan pesan tidak ada grafik
             $('#onData').removeClass('d-none');
             $('#noGrafik').addClass('d-none');
+
+            // Mendapatkan konteks canvas
             var ctx = document.getElementById('kt_chartjs').getContext('2d');
+
+            // Mengambil font family dari variabel CSS
             var fontFamily = KTUtil.getCssVariableValue('--bs-font-sans-serif');
 
+            // Inisialisasi array untuk labels dan data
             var labels = [];
             var jumlahData = [];
-            var backgroundColors = [];
             var nilaiBobot = [];
 
             // Mengiterasi objek data
             for (const [key, value] of Object.entries(data)) {
                 labels.push(value.kode_cpl + ' Target ' + '70' + '%');
                 jumlahData.push(value.nilai);
-                nilaiBobot.push(value.total_bobot);
-
-                // Menambahkan warna acak untuk setiap bar
-                backgroundColors.push(getRandomColor());
+                nilaiBobot.push(70);
             }
 
-            // Fungsi untuk menghasilkan warna acak
-            function getRandomColor() {
-                var letters = '0123456789ABCDEF';
-                var color = '#';
-                for (var i = 0; i < 6; i++) {
-                    color += letters[Math.floor(Math.random() * 16)];
-                }
-                return color;
-            }
-
-            // Chart data
+            // Data untuk chart
             const chartData = {
                 labels: labels,
                 datasets: [{
-                    label: 'Nilai CPL', // Menggunakan label umum untuk dataset
+                    label: 'Nilai CPL', // Label untuk dataset pertama
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     borderColor: 'rgb(255, 99, 132)',
                     pointBackgroundColor: 'rgb(255, 99, 132)',
@@ -165,7 +157,7 @@
                     pointHoverBorderColor: 'rgb(255, 99, 132)',
                     data: jumlahData,
                 }, {
-                    label: 'Target Bobot', // Menggunakan label umum untuk dataset
+                    label: 'Target Bobot', // Label untuk dataset kedua
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                     borderColor: 'rgb(54, 162, 235)',
                     pointBackgroundColor: 'rgb(54, 162, 235)',
@@ -176,7 +168,7 @@
                 }]
             };
 
-            // Chart config
+            // Konfigurasi chart
             const config = {
                 type: 'radar',
                 data: chartData,
@@ -184,7 +176,10 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Grafik Nilai Berdasarkan CPL'
+                            text: 'Grafik Nilai Berdasarkan CPL',
+                            font: {
+                                family: fontFamily
+                            }
                         }
                     },
                     responsive: true,
@@ -197,21 +192,16 @@
                             suggestedMin: 0,
                             suggestedMax: 100
                         }
-                    },
-                    defaults: {
-                        global: {
-                            defaultFont: fontFamily
-                        }
                     }
                 }
             };
 
-            // Destroy existing chart if it exists
+            // Hapus chart yang ada jika sudah ada
             if (window.myChart) {
                 window.myChart.destroy();
             }
 
-            // Create new ChartJS instance
+            // Buat instance ChartJS baru
             window.myChart = new Chart(ctx, config);
         }
 

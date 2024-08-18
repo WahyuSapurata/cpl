@@ -58,7 +58,7 @@ class NilaiCpl extends BaseController
             ->get()
             ->groupBy('uuid_mahasiswa');
 
-        // Inisialisasi array untuk menyimpan hasil penjumlahan
+        // Inisialisasi array untuk menyimpan hasil penjumlahan nilai dan bobot per CPL
         $summedData = [];
 
         // Iterasi melalui koleksi $penilaian yang dikelompokkan berdasarkan uuid_mahasiswa
@@ -70,7 +70,11 @@ class NilaiCpl extends BaseController
                 'nama_mahasiswa' => $namaMahasiswa,
             ];
 
-            // Iterasi melalui penilaian mahasiswa untuk menjumlahkan nilai berdasarkan CPL
+            // Inisialisasi total bobot dan total nilai untuk setiap CPL
+            $totalBobot = [];
+            $totalNilai = [];
+
+            // Iterasi melalui penilaian mahasiswa untuk menghitung nilai berdasarkan CPL
             foreach ($penilaianForMahasiswa as $item) {
                 $subCpmk = $subCpmks->where('uuid', $item->uuid_sub_cpmks)->first();
                 if ($subCpmk) {
@@ -78,18 +82,34 @@ class NilaiCpl extends BaseController
                     $dataCpl = $cpl->where('uuid', $dataCpmk->uuid_cpl)->first();
                     $kodeCpl = $dataCpl ? $dataCpl->kode_cpl : null;
 
-                    // Jika kode CPL ada, tambahkan nilai ke hasil penjumlahan
+                    // Jika kode CPL ada, tambahkan nilai dan akumulasikan bobot
                     if ($kodeCpl) {
-                        if (!isset($summedData[$uuidMahasiswa][$kodeCpl])) {
-                            $summedData[$uuidMahasiswa][$kodeCpl] = 0;
+                        if (!isset($totalNilai[$kodeCpl])) {
+                            $totalNilai[$kodeCpl] = 0;
+                            $totalBobot[$kodeCpl] = 0;
                         }
-                        $summedData[$uuidMahasiswa][$kodeCpl] += $item->nilai * ($subCpmk->bobot / 100);
+
+                        // Tambahkan nilai yang dihitung per row ke total nilai untuk CPL ini
+                        $nilaiPerRow = $item->nilai * $subCpmk->bobot;
+                        $totalNilai[$kodeCpl] += $nilaiPerRow;
+
+                        // Akumulasikan bobot
+                        $totalBobot[$kodeCpl] += $subCpmk->bobot;
                     }
+                }
+            }
+
+            // Bagi total nilai dengan total bobot untuk setiap CPL
+            foreach ($totalNilai as $kodeCpl => $nilai) {
+                if ($totalBobot[$kodeCpl] > 0) {
+                    $summedData[$uuidMahasiswa][$kodeCpl] = $nilai / $totalBobot[$kodeCpl];
+                } else {
+                    $summedData[$uuidMahasiswa][$kodeCpl] = 0; // Jika tidak ada bobot, beri nilai 0
                 }
             }
         }
 
-        // Menambahkan kode_cpl yang belum ada di penilaian dengan nilai null
+        // Menambahkan kode_cpl yang belum ada di penilaian dengan nilai 0
         foreach ($summedData as &$item) {
             foreach ($cpl as $dataCpl) {
                 $kodeCpl = $dataCpl->kode_cpl;
@@ -110,8 +130,10 @@ class NilaiCpl extends BaseController
 
     public function extract_pdf(Request $request)
     {
+        // Mendapatkan data dari query parameter
         $params = $request->query('data');
         $dataParams = json_decode($params, true);
+
         // Mendapatkan tahun ajaran dari permintaan
         $tahun_ajaran = $dataParams['tahun_ajaran'];
 
@@ -139,7 +161,7 @@ class NilaiCpl extends BaseController
             ->get()
             ->groupBy('uuid_mahasiswa');
 
-        // Inisialisasi array untuk menyimpan hasil penjumlahan
+        // Inisialisasi array untuk menyimpan hasil penjumlahan nilai dan bobot per CPL
         $summedData = [];
 
         // Iterasi melalui koleksi $penilaian yang dikelompokkan berdasarkan uuid_mahasiswa
@@ -151,7 +173,11 @@ class NilaiCpl extends BaseController
                 'nama_mahasiswa' => $namaMahasiswa,
             ];
 
-            // Iterasi melalui penilaian mahasiswa untuk menjumlahkan nilai berdasarkan CPL
+            // Inisialisasi total bobot dan total nilai untuk setiap CPL
+            $totalBobot = [];
+            $totalNilai = [];
+
+            // Iterasi melalui penilaian mahasiswa untuk menghitung nilai berdasarkan CPL
             foreach ($penilaianForMahasiswa as $item) {
                 $subCpmk = $subCpmks->where('uuid', $item->uuid_sub_cpmks)->first();
                 if ($subCpmk) {
@@ -159,37 +185,56 @@ class NilaiCpl extends BaseController
                     $dataCpl = $cpl->where('uuid', $dataCpmk->uuid_cpl)->first();
                     $kodeCpl = $dataCpl ? $dataCpl->kode_cpl : null;
 
-                    // Jika kode CPL ada, tambahkan nilai ke hasil penjumlahan
+                    // Jika kode CPL ada, tambahkan nilai dan akumulasikan bobot
                     if ($kodeCpl) {
-                        if (!isset($summedData[$uuidMahasiswa][$kodeCpl])) {
-                            $summedData[$uuidMahasiswa][$kodeCpl] = 0;
+                        if (!isset($totalNilai[$kodeCpl])) {
+                            $totalNilai[$kodeCpl] = 0;
+                            $totalBobot[$kodeCpl] = 0;
                         }
-                        $summedData[$uuidMahasiswa][$kodeCpl] += $item->nilai * ($subCpmk->bobot / 100);
+
+                        // Tambahkan nilai yang dihitung per row ke total nilai untuk CPL ini
+                        $nilaiPerRow = $item->nilai * $subCpmk->bobot;
+                        $totalNilai[$kodeCpl] += $nilaiPerRow;
+
+                        // Akumulasikan bobot
+                        $totalBobot[$kodeCpl] += $subCpmk->bobot;
                     }
+                }
+            }
+
+            // Bagi total nilai dengan total bobot untuk setiap CPL
+            foreach ($totalNilai as $kodeCpl => $nilai) {
+                if ($totalBobot[$kodeCpl] > 0) {
+                    $summedData[$uuidMahasiswa][$kodeCpl] = $nilai / $totalBobot[$kodeCpl];
+                } else {
+                    $summedData[$uuidMahasiswa][$kodeCpl] = 0; // Jika tidak ada bobot, beri nilai 0
                 }
             }
         }
 
-        // Menambahkan kode_cpl yang belum ada di penilaian dengan nilai null
+        // Menambahkan kode_cpl yang belum ada di penilaian dengan nilai 0
         foreach ($summedData as &$item) {
             foreach ($cpl as $dataCpl) {
                 $kodeCpl = $dataCpl->kode_cpl;
                 if (!isset($item[$kodeCpl])) {
-                    $item[$kodeCpl] = null;
+                    $item[$kodeCpl] = 0;
                 }
             }
         }
 
         // Mengubah array $summedData menjadi array kembali
         $summedData = array_values($summedData);
+
+        // Data untuk PDF
         $data = [
             'data' => $summedData, // Menggabungkan hasil ke dalam satu array
             'kode_cpl' => $cpl->pluck('kode_cpl')->unique()->values(),
         ];
-        // return view('operator.pdf.index', compact('data'));
-        // $data = ['title' => 'Welcome to Laravel PDF!'];
+
+        // Load view untuk PDF dengan data yang sudah dikumpulkan
         $pdf = Pdf::loadView('operator.pdf.index', compact('data'));
 
+        // Menampilkan PDF
         return $pdf->stream('CPL.pdf');
     }
 

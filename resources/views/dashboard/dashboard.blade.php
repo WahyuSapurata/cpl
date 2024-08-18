@@ -109,7 +109,7 @@
             // Mengiterasi objek data
             for (const [key, value] of Object.entries(data)) {
                 labels.push(key);
-                nilaiData.push(value.nilai);
+                nilaiData.push(value);
                 targetData.push(70); // Nilai target tetap 70 untuk setiap label
             }
 

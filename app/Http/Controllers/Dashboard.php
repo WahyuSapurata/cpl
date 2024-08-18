@@ -88,48 +88,78 @@ class Dashboard extends BaseController
         // Mengambil data penilaian yang sesuai dengan UUID SubCpmk dan tahun ajaran
         $penilaian = Penilaian::whereIn('uuid_sub_cpmks', $subCpmkUuids)
             ->where('tahun_ajaran', $tahun_ajaran)
-            ->get();
+            ->get()
+            ->groupBy('uuid_mahasiswa');
 
-        // Menghitung jumlah mahasiswa unik dalam penilaian
-        $jumlahMahasiswa = $penilaian->groupBy('uuid_mahasiswa')->count();
-
-        // Inisialisasi array untuk menyimpan hasil penjumlahan
+        // Inisialisasi array untuk menyimpan hasil per mahasiswa
         $summedData = [];
+        $totalMahasiswa = $penilaian->count(); // Total mahasiswa yang memiliki penilaian
 
-        // Iterasi melalui CPMK yang sudah dikelompokkan berdasarkan CPL
-        foreach ($groupedCpmks as $uuidCpl => $cpmks) {
-            $totalWeight = 0;
-            $totalValue = 0;
+        // Iterasi melalui koleksi $penilaian yang dikelompokkan berdasarkan uuid_mahasiswa
+        foreach ($penilaian as $uuidMahasiswa => $penilaianForMahasiswa) {
+            $mahasiswa = Mahasiswa::where('uuid', $uuidMahasiswa)->first();
+            $namaMahasiswa = $mahasiswa ? $mahasiswa->nama : null;
 
-            foreach ($cpmks as $cpmkItem) {
-                // Temukan SubCpmk yang sesuai
-                $subCpmk = $subCpmks->where('uuid_cpmk', $cpmkItem->uuid)->first();
+            $summedData[$uuidMahasiswa] = [
+                'nama_mahasiswa' => $namaMahasiswa,
+            ];
 
+            // Inisialisasi total bobot dan total nilai untuk setiap CPL
+            $totalBobot = [];
+            $totalNilai = [];
+
+            // Iterasi melalui penilaian mahasiswa untuk menghitung nilai berdasarkan CPL
+            foreach ($penilaianForMahasiswa as $item) {
+                $subCpmk = $subCpmks->where('uuid', $item->uuid_sub_cpmks)->first();
                 if ($subCpmk) {
-                    // Temukan nilai penilaian yang sesuai
-                    $nilai = $penilaian
-                        ->where('uuid_sub_cpmks', $subCpmk->uuid)
-                        ->avg('nilai');
+                    $dataCpmk = $cpmk->where('uuid', $subCpmk->uuid_cpmk)->first();
+                    $dataCpl = $cpl->where('uuid', $dataCpmk->uuid_cpl)->first();
+                    $kodeCpl = $dataCpl ? $dataCpl->kode_cpl : null;
 
-                    if ($nilai) {
-                        $totalValue += $nilai * ($subCpmk->bobot / 100);
-                        $totalWeight += $subCpmk->bobot;
+                    // Jika kode CPL ada, tambahkan nilai dan akumulasikan bobot
+                    if ($kodeCpl) {
+                        if (!isset($totalNilai[$kodeCpl])) {
+                            $totalNilai[$kodeCpl] = 0;
+                            $totalBobot[$kodeCpl] = 0;
+                        }
+
+                        // Tambahkan nilai yang dihitung per row ke total nilai untuk CPL ini
+                        $nilaiPerRow = $item->nilai * $subCpmk->bobot;
+                        $totalNilai[$kodeCpl] += $nilaiPerRow;
+
+                        // Akumulasikan bobot
+                        $totalBobot[$kodeCpl] += $subCpmk->bobot;
                     }
                 }
             }
 
-            // Temukan kode CPL yang sesuai
-            $kodeCpl = $cpl->where('uuid', $uuidCpl)->first()->kode_cpl;
-
-            // Jika kode CPL ada, tambahkan nilai dan bobot ke hasil penjumlahan
-            if ($kodeCpl) {
-                $summedData[$kodeCpl] = [
-                    'nilai' => $totalWeight > 0 ? $totalValue : 0,
-                    'bobot' => $totalWeight
-                ];
+            // Bagi total nilai dengan total bobot untuk setiap CPL
+            foreach ($totalNilai as $kodeCpl => $nilai) {
+                $summedData[$uuidMahasiswa][$kodeCpl] = $totalBobot[$kodeCpl] > 0 ? $nilai / $totalBobot[$kodeCpl] : 0;
             }
         }
-        return $this->sendResponse($summedData, 'Get data success');
+
+        // Menghitung total nilai CPL untuk semua mahasiswa
+        $totalCplValues = [];
+        foreach ($summedData as $data) {
+            foreach ($data as $kodeCpl => $nilai) {
+                if ($kodeCpl !== 'nama_mahasiswa') {
+                    if (!isset($totalCplValues[$kodeCpl])) {
+                        $totalCplValues[$kodeCpl] = 0;
+                    }
+                    $totalCplValues[$kodeCpl] += $nilai;
+                }
+            }
+        }
+
+        // Hitung rata-rata nilai CPL keseluruhan
+        $averageCplValues = [];
+        foreach ($totalCplValues as $kodeCpl => $totalValue) {
+            $averageCplValues[$kodeCpl] = $totalMahasiswa > 0 ? $totalValue / $totalMahasiswa : 0;
+        }
+
+        // Mengembalikan response dengan rata-rata nilai CPL per mahasiswa
+        return $this->sendResponse($averageCplValues, 'Get data success');
     }
 
     public function get_nilai_cpl_operator(Request $request)

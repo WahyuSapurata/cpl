@@ -52,25 +52,47 @@ class NilaiCpmk extends BaseController
                 'nama_mahasiswa' => $namaMahasiswa,
             ];
 
-            // Iterasi melalui penilaian mahasiswa untuk menjumlahkan nilai berdasarkan CPMK
+            // Inisialisasi total bobot dan total nilai untuk mahasiswa ini
+            $totalBobot = [];
+            $totalNilai = [];
+
+            // Iterasi melalui penilaian mahasiswa untuk menghitung nilai berdasarkan CPMK per row terlebih dahulu
             foreach ($penilaianForMahasiswa as $item) {
+                // Cari sub CPMK yang sesuai dengan uuid_sub_cpmks dari penilaian
                 $subCpmk = $subCpmks->where('uuid', $item->uuid_sub_cpmks)->first();
+
                 if ($subCpmk) {
+                    // Cari CPMK yang sesuai dengan uuid dari sub CPMK
                     $dataCpmk = $cpmk->where('uuid', $subCpmk->uuid_cpmk)->first();
                     $kodeCpmk = $dataCpmk ? $dataCpmk->kode_cpmk : null;
 
-                    // Jika kode CPMK ada, tambahkan nilai ke hasil penjumlahan
+                    // Jika kode CPMK ditemukan, lakukan proses penjumlahan nilai dan bobot
                     if ($kodeCpmk) {
-                        if (!isset($summedData[$uuidMahasiswa][$kodeCpmk])) {
-                            $summedData[$uuidMahasiswa][$kodeCpmk] = 0;
+                        // Inisialisasi nilai dan bobot jika belum ada
+                        if (!isset($totalNilai[$kodeCpmk])) {
+                            $totalNilai[$kodeCpmk] = 0;
+                            $totalBobot[$kodeCpmk] = 0;
                         }
-                        $summedData[$uuidMahasiswa][$kodeCpmk] += $item->nilai * ($dataCpmk->bobot / 100);
+
+                        // Lakukan perhitungan nilai per row dan akumulasi total bobot
+                        $nilaiPerRow = $item->nilai * $subCpmk->bobot;
+                        $totalNilai[$kodeCpmk] += $nilaiPerRow;
+                        $totalBobot[$kodeCpmk] += $subCpmk->bobot;
                     }
+                }
+            }
+
+            // Setelah selesai menghitung nilai per row, bagi total nilai dengan total bobot
+            foreach ($totalNilai as $kodeCpmk => $nilai) {
+                if ($totalBobot[$kodeCpmk] > 0) {
+                    $summedData[$uuidMahasiswa][$kodeCpmk] = $nilai / $totalBobot[$kodeCpmk];
+                } else {
+                    $summedData[$uuidMahasiswa][$kodeCpmk] = 0; // Jika tidak ada bobot, beri nilai 0
                 }
             }
         }
 
-        // Menambahkan kode_cpmk yang belum ada di penilaian dengan nilai null
+        // Menambahkan kode_cpmk yang belum ada di penilaian dengan nilai 0
         foreach ($summedData as &$item) {
             foreach ($cpmk as $dataCpmk) {
                 $kodeCpmk = $dataCpmk->kode_cpmk;
