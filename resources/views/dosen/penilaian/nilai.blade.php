@@ -127,8 +127,9 @@
 @section('script')
     <script>
         $(document).on('click', '#button-back', function() {
-            // Kembali ke halaman sebelumnya
-            window.history.back();
+            // Ambil UUID dari Blade template dan navigasi ke URL sebelumnya
+            const uuid = {!! json_encode($kelas[0]->uuid) !!}; // Mengonversi nilai PHP ke JavaScript
+            window.location.href = `/dosen/dashboard/${uuid}`;
         });
     </script>
 @endsection

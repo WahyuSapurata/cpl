@@ -47,7 +47,7 @@ class PenilaianController extends BaseController
             return $item;
         });
 
-        return view('dosen.penilaian.nilai', compact('module', 'teknikPenilaian', 'mahasiswa_list'));
+        return view('dosen.penilaian.nilai', compact('module', 'teknikPenilaian', 'mahasiswa_list', 'kelas'));
     }
 
     public function update(Request $request)
