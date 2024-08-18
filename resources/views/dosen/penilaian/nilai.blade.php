@@ -127,15 +127,8 @@
 @section('script')
     <script>
         $(document).on('click', '#button-back', function() {
-            const previousUrl = document.referrer; // Ambil URL sebelumnya dari document.referrer
-
-            // Navigasi ke URL sebelumnya
-            window.location.href = previousUrl;
-
-            // Reload halaman jika sudah kembali ke URL sebelumnya
-            if (window.location.href === previousUrl) {
-                window.location.reload();
-            }
+            // Kembali ke halaman sebelumnya
+            window.history.back();
         });
     </script>
 @endsection
