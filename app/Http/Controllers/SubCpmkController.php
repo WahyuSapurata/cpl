@@ -21,8 +21,16 @@ class SubCpmkController extends BaseController
 
     public function operator()
     {
+        $module = 'Mata Kuliah';
+        $matkul = MataKuliah::all();
+        return view('operator.subcpmk.index', compact('module', 'matkul'));
+    }
+
+    public function detail($params)
+    {
         $module = 'Sub CPMK';
-        return view('operator.subcpmk.index', compact('module'));
+        $matkul = MataKuliah::where('uuid', $params)->first();
+        return view('operator.subcpmk.detail', compact('module', 'matkul'));
     }
 
     public function get($params)

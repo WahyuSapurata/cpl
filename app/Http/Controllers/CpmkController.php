@@ -21,8 +21,16 @@ class CpmkController extends BaseController
 
     public function operator()
     {
+        $module = 'Mata Kuliah';
+        $matkul = MataKuliah::all();
+        return view('operator.cpmk.index', compact('module', 'matkul'));
+    }
+
+    public function detail($params)
+    {
         $module = 'CPMK';
-        return view('operator.cpmk.index', compact('module'));
+        $matkul = MataKuliah::where('uuid', $params)->first();
+        return view('operator.cpmk.detail', compact('module', 'matkul'));
     }
 
     public function get()
