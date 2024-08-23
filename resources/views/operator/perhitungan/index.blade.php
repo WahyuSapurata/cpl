@@ -1,13 +1,4 @@
 @extends('layouts.layout')
-@section('button')
-    <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
-        <!--begin::Actions-->
-        <div class="d-flex align-items-center gap-2 gap-lg-3">
-            <a href="#" id="btn-extract" class="btn btn-sm btn-danger export disabled">Export PDF</a>
-        </div>
-        <!--end::Actions-->
-    </div>
-@endsection
 @section('content')
     <div class="post d-flex flex-column-fluid" id="kt_post">
         <!--begin::Container-->
@@ -41,8 +32,11 @@
                                         <tr class="fw-bolder fs-6 text-gray-800">
                                             <th>No</th>
                                             <th>Kode CPL</th>
-                                            <th>Deskripsi</th>
-                                            <th>Ketercapaian CPL</th>
+                                            <th>Mata Kuliah</th>
+                                            <th>Bobot CPL</th>
+                                            <th>Total Bobot CPL</th>
+                                            <th>Nilai CPL MK</th>
+                                            <th>Bobot * Rerata CPL MK</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -101,10 +95,8 @@
                     'tahun_ajaran': tahun_ajaran
                 };
 
-                extract(data);
-
                 $.ajax({
-                    url: `/operator/get-cpl-operator`,
+                    url: `/operator/get-pergitungan`,
                     method: 'GET',
                     data: data,
                     success: function(res) {
@@ -114,7 +106,7 @@
                         }
 
                         // Inisialisasi ulang DataTable dengan data yang diperbarui
-                        initDatatable(res.data.data);
+                        initDatatable(res.data);
                     },
                     error: function(error) {
                         console.error(error);
@@ -148,19 +140,57 @@
                     data: 'kode_cpl',
                     className: 'text-center',
                 }, {
-                    data: 'deskripsi',
+                    data: 'mata_kuliah',
+                    render: function(data, type, row, meta) {
+                        let item = '<ul>';
+                        $.each(data, function(x, y) {
+                            item += `<li>${y.matkul}</li>`;
+                        });
+                        item += '</ul>';
+                        return item;
+                    }
                 }, {
-                    data: 'nilai',
-                    className: 'text-center',
-                    render: function(data, type, row) {
-                        // Memastikan bahwa nilai adalah angka
-                        var number = parseFloat(data);
-                        if (isNaN(number)) {
-                            return data;
-                        }
-
-                        // Membulatkan angka ke dua desimal
-                        return number.toFixed(2);
+                    data: 'mata_kuliah',
+                    render: function(data, type, row, meta) {
+                        let item = '<ul>';
+                        $.each(data, function(x, y) {
+                            item += `<li>${y.bobot}</li>`;
+                        });
+                        item += '</ul>';
+                        return item;
+                    }
+                }, {
+                    data: 'mata_kuliah',
+                    render: function(data, type, row, meta) {
+                        let item = 0;
+                        $.each(data, function(x, y) {
+                            item += parseFloat(y.bobot);
+                        });
+                        return item;
+                    }
+                }, {
+                    data: 'mata_kuliah',
+                    render: function(data, type, row, meta) {
+                        let item = '<ul>';
+                        $.each(data, function(x, y) {
+                            const total = y.nilai / y.total_mahasiswa;
+                            item += `<li>${total.toFixed(2)}</li>`;
+                        });
+                        item += '</ul>';
+                        return item;
+                    }
+                }, {
+                    data: 'mata_kuliah',
+                    render: function(data, type, row, meta) {
+                        let item = '<ul>';
+                        $.each(data, function(x, y) {
+                            const total = (y.nilai / y.total_mahasiswa) * (y.bobot /
+                                100);
+                            item +=
+                                `<li>${total.toFixed(2)}</li>`;
+                        });
+                        item += '</ul>';
+                        return item;
                     }
                 }],
                 rowCallback: function(row, data, index) {
@@ -169,15 +199,6 @@
                     var rowIndex = startIndex + index + 1;
                     $('td', row).eq(0).html(rowIndex);
                 },
-            });
-        };
-
-        const extract = (data) => {
-            $('#btn-extract').click(function(e) {
-                e.preventDefault();
-                const jsonData = JSON.stringify(data);
-                const encodedData = encodeURIComponent(jsonData);
-                window.open('/operator/extract-pdf?data=' + encodedData, "_blank");
             });
         };
     </script>

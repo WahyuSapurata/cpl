@@ -411,6 +411,25 @@
 
                 <!--begin::Menu item-->
                 <div class="menu-item">
+                    <a class="menu-link {{ isset($path[1]) && $path[1] === 'perhitungan' ? 'active' : '' }}"
+                        href="{{ route('operator.perhitungan') }}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                            <span class="svg-icon svg-icon-2">
+                                <img src="{{ isset($path[1]) && $path[1] === 'perhitungan' ? url('admin/assets/media/icons/aside/perhitunganact.svg') : url('/admin/assets/media/icons/aside/perhitungandef.svg') }}"
+                                    alt="">
+                            </span>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title"
+                            style="{{ isset($path[1]) && $path[1] === 'perhitungan' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Perhitungan
+                            CPL</span>
+                    </a>
+                </div>
+                <!--end::Menu item-->
+
+                <!--begin::Menu item-->
+                <div class="menu-item">
                     <a class="menu-link {{ isset($path[1]) && $path[1] === 'nilaicpl' ? 'active' : '' }}"
                         href="{{ route('operator.nilaicpl') }}">
                         <span class="menu-icon">

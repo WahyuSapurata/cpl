@@ -132,6 +132,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/subcpmk', 'SubCpmkController@operator')->name('subcpmk');
         Route::get('/detail-sub/{params}', 'SubCpmkController@detail')->name('detail-sub');
 
+        Route::get('/perhitungan', 'PerhitunganCpl@index')->name('perhitungan');
+        Route::get('/get-pergitungan', 'PerhitunganCpl@get_operator')->name('get-pergitungan');
+
         Route::get('/nilaicpl', 'NilaiCpl@operator')->name('nilaicpl');
         Route::get('/nilai', 'NilaiController@index')->name('nilai');
 
@@ -139,7 +142,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
         Route::get('/get-cpl-dashboard', 'Dashboard@get_nilai_cpl_operator')->name('get-cpl-dashboard');
 
-        Route::get('/extract-pdf/{params}', 'NilaiCpl@extract_pdf')->name('extract-pdf');
+        Route::get('/extract-pdf', 'NilaiCpl@extract_pdf_operator')->name('extract-pdf');
     });
 
     Route::group(['prefix' => 'kajur', 'middleware' => ['auth'], 'as' => 'kajur.'], function () {
