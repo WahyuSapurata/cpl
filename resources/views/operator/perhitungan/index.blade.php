@@ -154,7 +154,7 @@
                     render: function(data, type, row, meta) {
                         let item = '<ul>';
                         $.each(data, function(x, y) {
-                            item += `<li>${y.bobot}</li>`;
+                            item += `<li>${y.total_bobot}</li>`;
                         });
                         item += '</ul>';
                         return item;
@@ -164,7 +164,7 @@
                     render: function(data, type, row, meta) {
                         let item = 0;
                         $.each(data, function(x, y) {
-                            item += parseFloat(y.bobot);
+                            item += parseFloat(y.total_bobot);
                         });
                         return item;
                     }
@@ -173,7 +173,7 @@
                     render: function(data, type, row, meta) {
                         let item = '<ul>';
                         $.each(data, function(x, y) {
-                            const total = y.nilai / y.total_mahasiswa;
+                            const total = (y.total_nilai / y.total_bobot) / y.total_mahasiswa;
                             item += `<li>${total.toFixed(2)}</li>`;
                         });
                         item += '</ul>';
@@ -184,8 +184,7 @@
                     render: function(data, type, row, meta) {
                         let item = '<ul>';
                         $.each(data, function(x, y) {
-                            const total = (y.nilai / y.total_mahasiswa) * (y.bobot /
-                                100);
+                            const total = ((y.total_nilai / y.total_bobot) / y.total_mahasiswa) * y.total_bobot / 100;
                             item +=
                                 `<li>${total.toFixed(2)}</li>`;
                         });

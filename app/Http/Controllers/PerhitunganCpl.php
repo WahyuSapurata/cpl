@@ -46,18 +46,42 @@ class PerhitunganCpl extends BaseController
             ->where('tahun_ajaran', $tahun_ajaran)
             ->get();
 
-        // Mengelompokkan data mahasiswa berdasarkan SubCpmk dan menghitung total mahasiswa per mata kuliah
-        $mahasiswaByMatkul = $penilaian->groupBy(function ($item) use ($subCpmks) {
-            $subCpmk = $subCpmks->where('uuid', $item->uuid_sub_cpmks)->first();
-            return $subCpmk ? $subCpmk->uuid_matkul : null;
-        })->map(function ($group) {
-            return $group->unique('uuid_mahasiswa')->count();
-        });
-
         // Inisialisasi array untuk menyimpan hasil penjumlahan berdasarkan CPL dan mata kuliah
         $summedData = [];
 
-        // Iterasi melalui penilaian untuk menjumlahkan nilai dan bobot berdasarkan CPL dan mata kuliah
+        // Iterasi melalui CPMK untuk menjumlahkan bobot berdasarkan CPL dan mata kuliah
+        foreach ($cpmk as $dataCpmk) {
+            $dataCpl = $cpl->where('uuid', $dataCpmk->uuid_cpl)->first();
+            $kodeCpl = $dataCpl ? $dataCpl->kode_cpl : null;
+
+            $matkul = MataKuliah::where('uuid', $dataCpmk->uuid_matkul)->first();
+
+            // Jika kode CPL dan mata kuliah ada, tambahkan bobot ke hasil penjumlahan
+            if ($kodeCpl && $matkul) {
+                // Inisialisasi CPL jika belum ada
+                if (!isset($summedData[$kodeCpl])) {
+                    $summedData[$kodeCpl] = [
+                        'kode_cpl' => $kodeCpl,
+                        'mata_kuliah' => []
+                    ];
+                }
+
+                // Inisialisasi mata kuliah dalam CPL jika belum ada
+                if (!isset($summedData[$kodeCpl]['mata_kuliah'][$matkul->mata_kuliah])) {
+                    $summedData[$kodeCpl]['mata_kuliah'][$matkul->mata_kuliah] = [
+                        'matkul' => $matkul->mata_kuliah,
+                        'total_bobot' => 0,
+                        'total_nilai' => 0,
+                        'total_mahasiswa' => 0
+                    ];
+                }
+
+                // Tambahkan bobot dari CPMK yang terkait dengan CPL dan mata kuliah
+                $summedData[$kodeCpl]['mata_kuliah'][$matkul->mata_kuliah]['total_bobot'] += $dataCpmk->bobot;
+            }
+        }
+
+        // Iterasi melalui penilaian untuk menjumlahkan nilai berdasarkan CPL dan mata kuliah
         foreach ($penilaian as $item) {
             $subCpmk = $subCpmks->where('uuid', $item->uuid_sub_cpmks)->first();
             if ($subCpmk) {
@@ -69,40 +93,17 @@ class PerhitunganCpl extends BaseController
 
                 // Jika kode CPL dan mata kuliah ada, tambahkan nilai ke hasil penjumlahan
                 if ($kodeCpl && $matkul) {
-                    if (!isset($summedData[$kodeCpl])) {
-                        $summedData[$kodeCpl] = [
-                            'kode_cpl' => $kodeCpl,
-                            'mata_kuliah' => []
-                        ];
-                    }
-
-                    // Ambil total mahasiswa untuk mata kuliah ini
-                    $totalMahasiswaMatkul = $mahasiswaByMatkul[$subCpmk->uuid_matkul] ?? 0;
-
                     // Hitung nilai berdasarkan bobot dan nilai penilaian
                     $nilaiPerRow = ($item->nilai * $subCpmk->bobot);
 
-                    // Cek jika mata kuliah sudah ada dalam CPL, tambahkan bobot, nilai, dan total mahasiswa
-                    $found = false;
-                    foreach ($summedData[$kodeCpl]['mata_kuliah'] as &$mk) {
-                        if ($mk['matkul'] == $matkul->mata_kuliah) {
-                            $mk['nilai'] += $nilaiPerRow / $dataCpmk->bobot;
-                            $mk['bobot'] = $dataCpmk->bobot;
-                            $mk['total_mahasiswa'] = $totalMahasiswaMatkul;
-                            $found = true;
-                            break;
-                        }
-                    }
+                    // Tambahkan nilai ke mata kuliah yang terkait
+                    $summedData[$kodeCpl]['mata_kuliah'][$matkul->mata_kuliah]['total_nilai'] += $nilaiPerRow;
 
-                    // Jika belum ada, tambahkan sebagai mata kuliah baru
-                    if (!$found) {
-                        $summedData[$kodeCpl]['mata_kuliah'][] = [
-                            'matkul' => $matkul->mata_kuliah,
-                            'nilai' => $nilaiPerRow / $dataCpmk->bobot,
-                            'bobot' => $dataCpmk->bobot,
-                            'total_mahasiswa' => $totalMahasiswaMatkul
-                        ];
-                    }
+                    // Tambahkan total mahasiswa (jika relevan)
+                    $summedData[$kodeCpl]['mata_kuliah'][$matkul->mata_kuliah]['total_mahasiswa'] = $penilaian
+                        ->where('uuid_sub_cpmks', $item->uuid_sub_cpmks)
+                        ->unique('uuid_mahasiswa')
+                        ->count();
                 }
             }
         }
@@ -120,7 +121,11 @@ class PerhitunganCpl extends BaseController
 
         // Konversi hasil menjadi array satu dimensi
         $result = array_values($summedData);
+        foreach ($result as &$cplData) {
+            $cplData['mata_kuliah'] = array_values($cplData['mata_kuliah']);
+        }
 
+        // Mengembalikan hasil sebagai response
         return $this->sendResponse($result, 'Get data success');
     }
 }
