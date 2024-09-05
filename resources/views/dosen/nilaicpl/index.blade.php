@@ -2,8 +2,24 @@
 @section('button')
     <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
         <!--begin::Actions-->
+        <div data-kt-swapper="true" data-kt-swapper-mode="prepend"
+            data-kt-swapper-parent="{default: '#kt_content_container', 'lg': '#kt_toolbar_container'}"
+            class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0 gap-3">
+            <button class="btn btn-info btn-sm" id="button-back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" id="svg-button"
+                    viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                    <style>
+                        #svg-button {
+                            fill: #ffffff
+                        }
+                    </style>
+                    <path
+                        d="M512 256A256 256 0 1 0 0 256a256 256 0 1 0 512 0zM217.4 376.9L117.5 269.8c-3.5-3.8-5.5-8.7-5.5-13.8s2-10.1 5.5-13.8l99.9-107.1c4.2-4.5 10.1-7.1 16.3-7.1c12.3 0 22.3 10 22.3 22.3l0 57.7 96 0c17.7 0 32 14.3 32 32l0 32c0 17.7-14.3 32-32 32l-96 0 0 57.7c0 12.3-10 22.3-22.3 22.3c-6.2 0-12.1-2.6-16.3-7.1z" />
+                </svg>
+                Kembali</button>
+        </div>
         <div class="d-flex align-items-center gap-2 gap-lg-3">
-            <a href="#" id="btn-extract" class="btn btn-sm btn-danger export disabled">Export PDF</a>
+            <a href="#" id="btn-extract" class="btn btn-sm btn-danger export">Export PDF</a>
         </div>
         <!--end::Actions-->
     </div>
@@ -13,30 +29,6 @@
         <!--begin::Container-->
         <div id="kt_content_container" class="container">
             <div class="row">
-
-                <div class="row justify-content-center">
-                    <div class="card mb-5 py-3 w-50">
-                        <form>
-                            <div class="mb-10">
-                                <label class="form-label">Mata Kuliah</label>
-                                <select name="uuid_matkul" class="form-select" data-control="select2"
-                                    id="from_select_matkul" data-placeholder="Pilih jenis inputan">
-                                </select>
-                                <small class="text-danger uuid_matkul_error"></small>
-                            </div>
-                            <div class="mb-10">
-                                <label class="form-label">Tahun Ajaran</label>
-                                <select name="tahun_ajaran" class="form-select" data-control="select2"
-                                    id="from_select_tahun_ajaran" data-placeholder="Pilih">
-                                </select>
-                                <small class="text-danger tahun_ajaran_error"></small>
-                            </div>
-                            <div class="d-flex my-5">
-                                <button class="btn btn-primary btn-sm " id="button-cari"></i>Cari Data</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
 
                 <div class="card">
                     <div class="card-body p-0">
@@ -51,8 +43,6 @@
                                     <tbody>
                                     </tbody>
                                 </table>
-                                <div id="data-kosong" class="fs-4 text-gray-400 text-center">Pilih option di atas terlebih
-                                    dahulu</div>
                             </div>
                         </div>
 
@@ -68,71 +58,53 @@
     <script>
         let control = new Control();
 
-        const generateSchoolYears = (startYear) => {
-            const currentYear = new Date().getFullYear();
-            const years = [];
+        $(document).on('click', '#button-back', function() {
+            const previousUrl = document.referrer; // Ambil URL sebelumnya dari document.referrer
 
-            for (let year = startYear; year <= currentYear; year++) {
-                years.push({
-                    text: `${year}/${year + 1}`
-                });
+            // Navigasi ke URL sebelumnya
+            window.location.href = previousUrl;
+
+            // Reload halaman jika sudah kembali ke URL sebelumnya
+            if (window.location.href === previousUrl) {
+                window.location.reload();
             }
-
-            // Balik urutan tahun agar tahun sekarang berada di paling atas
-            years.reverse();
-
-            return years;
-        };
-
-        const data = generateSchoolYears(2000);
-
-        $(function() {
-            control.push_select_mk('/dosen/get-matkul-by-user', '#from_select_matkul');
-            control.push_select_data(data, '#from_select_tahun_ajaran');
         });
 
         $(document).ready(function() {
-            $(document).on('click', '#button-cari', function(e) {
-                e.preventDefault(); // Menghentikan pengiriman form standar
-                $('#btn-extract').removeClass('disabled');
-                $('#data-kosong').empty();
-                // Kosongkan elemen thead
-                $('#tThead').empty();
 
-                const matkul = $('#from_select_matkul').val();
-                const tahun_ajaran = $('#from_select_tahun_ajaran').val();
+            const matkul = @json(request('uuid_matkul'));
+            const tahun_ajaran = @json(request('tahun_ajaran'));
 
-                const data = {
-                    'matkul': matkul,
-                    'tahun_ajaran': tahun_ajaran
-                };
+            const data = {
+                'matkul': matkul,
+                'tahun_ajaran': tahun_ajaran
+            };
 
-                extract(data);
+            extract(data);
 
-                $.ajax({
-                    url: `/dosen/get-nilaicpl`,
-                    method: 'GET',
-                    data: data,
-                    success: function(res) {
-                        let kodeCpl = res.data.kode_cpl.map(item => item);
-                        let kodeCplHead = kodeCpl.map(cpl =>
-                            `<th>${cpl}</th>`).join('');
+            $.ajax({
+                url: `/dosen/get-nilaicpl`,
+                method: 'GET',
+                data: data,
+                success: function(res) {
+                    let kodeCpl = res.data.kode_cpl.map(item => item);
+                    let kodeCplHead = kodeCpl.map(cpl =>
+                        `<th>${cpl}</th>`).join('');
 
-                        let combinedData = combineDataByUuid(res.data.data);
-                        let label_head = ['nama_mahasiswa', ...kodeCpl];
+                    let combinedData = combineDataByUuid(res.data.data);
+                    let label_head = ['nama_mahasiswa', ...kodeCpl];
 
-                        // Hapus DataTable sebelumnya (jika ada) sebelum menginisialisasi yang baru
-                        if ($.fn.DataTable.isDataTable('#kt_table_data')) {
-                            $('#kt_table_data').DataTable().clear().destroy();
-                        }
-
-                        // Inisialisasi ulang DataTable dengan data yang diperbarui
-                        initDatatable(combinedData, kodeCplHead, label_head);
-                    },
-                    error: function(error) {
-                        console.error(error);
+                    // Hapus DataTable sebelumnya (jika ada) sebelum menginisialisasi yang baru
+                    if ($.fn.DataTable.isDataTable('#kt_table_data')) {
+                        $('#kt_table_data').DataTable().clear().destroy();
                     }
-                });
+
+                    // Inisialisasi ulang DataTable dengan data yang diperbarui
+                    initDatatable(combinedData, kodeCplHead, label_head);
+                },
+                error: function(error) {
+                    console.error(error);
+                }
             });
         });
 

@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 
 class NilaiCpmk extends BaseController
 {
-    public function index()
+    public function index(Request $request)
     {
         $module = 'Nilai CPMK';
         return view('dosen.nilaicpmk.index', compact('module'));

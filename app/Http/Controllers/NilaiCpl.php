@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 
 class NilaiCpl extends BaseController
 {
-    public function index()
+    public function index(Request $request)
     {
         $module = 'Nilai CPL';
         return view('dosen.nilaicpl.index', compact('module'));

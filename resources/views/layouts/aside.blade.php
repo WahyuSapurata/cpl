@@ -450,7 +450,7 @@
 
             @if ($role === 'dosen')
                 <!--begin::Menu item-->
-                <div class="menu-item">
+                {{-- <div class="menu-item">
                     <a class="menu-link {{ isset($path[1]) && $path[1] === 'nilai-cpmk' ? 'active' : '' }}"
                         href="{{ route('dosen.nilai-cpmk') }}">
                         <span class="menu-icon">
@@ -465,7 +465,7 @@
                             style="{{ isset($path[1]) && $path[1] === 'nilai-cpmk' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Nilai
                             CPMK</span>
                     </a>
-                </div>
+                </div> --}}
                 <!--end::Menu item-->
 
                 {{-- <!--begin::Menu item-->
@@ -488,7 +488,7 @@
                 <!--end::Menu item--> --}}
 
                 <!--begin::Menu item-->
-                <div class="menu-item">
+                {{-- <div class="menu-item">
                     <a class="menu-link {{ isset($path[1]) && $path[1] === 'nilaicpl' ? 'active' : '' }}"
                         href="{{ route('dosen.nilaicpl') }}">
                         <span class="menu-icon">
@@ -503,7 +503,7 @@
                             style="{{ isset($path[1]) && $path[1] === 'nilaicpl' ? 'color: #F4BE2A' : 'color: #FFFFFF' }}">Nilai
                             CPL</span>
                     </a>
-                </div>
+                </div> --}}
                 <!--end::Menu item-->
             @endif
 

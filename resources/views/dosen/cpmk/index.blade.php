@@ -179,9 +179,6 @@
             }
         });
 
-
-
-
         $(document).ready(async function() {
 
             let selectedUuid = @json($mata_kuliah->uuid);

@@ -53,6 +53,16 @@
                             <input type="hidden" name="tahun_ajaran" value="{{ $kelas->tahun_ajaran }}">
                             <button type="submit" class="btn btn-primary w-100">Penilaian</button>
                         </form>
+                        <form action="{{ route('dosen.nilai-cpmk') }}" method="GET">
+                            <input type="hidden" name="uuid_matkul" value="{{ $mata_kuliah->uuid }}">
+                            <input type="hidden" name="tahun_ajaran" value="{{ $kelas->tahun_ajaran }}">
+                            <button type="submit" class="btn btn-primary w-100">Nilai CPMK</button>
+                        </form>
+                        <form action="{{ route('dosen.nilaicpl') }}" method="GET">
+                            <input type="hidden" name="uuid_matkul" value="{{ $mata_kuliah->uuid }}">
+                            <input type="hidden" name="tahun_ajaran" value="{{ $kelas->tahun_ajaran }}">
+                            <button type="submit" class="btn btn-primary w-100">Nilai CPL</button>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -84,11 +84,6 @@
                                 echo $firstLetter . $secondLetter;
                             @endphp
                         </span>
-                        {{-- <div class="cursor-pointer symbol symbol-30px symbol-md-40px" data-kt-menu-trigger="click"
-                            data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end" data-kt-menu-flip="bottom">
-                            <div class="text-gray-700">Hai, <span class="text-gray-900">{{ $username }}</span>
-                            </div>
-                        </div> --}}
                         <!--begin::Toggle-->
                         <button type="button"
                             class="btn btn-outline btn-outline-dashed btn-outline-dark btn-active-light-dark rotate bg-transparent"
