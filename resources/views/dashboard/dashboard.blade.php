@@ -4,11 +4,24 @@
         <!--begin::Page title-->
         <div data-kt-swapper="true" data-kt-swapper-mode="prepend"
             data-kt-swapper-parent="{default: '#kt_content_container', 'lg': '#kt_toolbar_container'}"
-            class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
+            class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0 w-100">
             <!--begin::Title-->
-            <div class="fs-5 fw-bolder">Mata Kuliah : {{ $mata_kuliah->mata_kuliah }} | Tahun Ajaran :
+            {{-- <div class="fs-5 fw-bolder">Mata Kuliah : {{ $mata_kuliah->mata_kuliah }} | Tahun Ajaran :
                 {{ $kelas->tahun_ajaran }}
-            </div>
+            </div> --}}
+            <form class="row w-100 d-flex align-items-center">
+                <div class="col-md-10 d-flex gap-4">
+                    <select name="tahun_ajaran" class="form-select" data-control="select2" id="from_select_tahun_ajaran"
+                        data-placeholder="Pilih Tahun Ajaran">
+                    </select>
+                    <select name="matkul" class="form-select" data-control="select2" id="from_select_matkul"
+                        data-placeholder="Pilih Mata Kuliah">
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex justify-content-center align-items-end">
+                    <button class="btn btn-primary btn-sm " id="button-cari"></i>Cari Data</button>
+                </div>
+            </form>
             <!--end::Title-->
         </div>
     </div>
@@ -74,37 +87,111 @@
     <script>
         let control = new Control();
 
-        $(document).ready(function() {
-            const data = {
-                'matkul': @json($mata_kuliah->uuid),
-                'tahun_ajaran': @json($kelas->tahun_ajaran)
-            };
+        const generateSchoolYears = (startYear) => {
+            const currentYear = new Date().getFullYear();
+            const years = [];
 
+            for (let year = startYear; year <= currentYear; year++) {
+                years.push({
+                    text: `${year}/${year + 1}`
+                });
+            }
+
+            // Membalik urutan tahun agar tahun sekarang berada di paling atas
+            return years.reverse();
+        };
+
+        const data = generateSchoolYears(2000);
+
+        $(function() {
+            pushSelectTahunAjaran(data, '#from_select_tahun_ajaran');
+            pushMataKuliah('/dosen/get-matkul-by-user', '#from_select_matkul');
+        });
+
+        function pushSelectTahunAjaran(data, element) {
+            $(element).empty();
+            let html = "<option></option>";
+            $.each(data, function(index, item) {
+                const isSelected = item.text === @json($kelas->tahun_ajaran) ? 'selected' : '';
+                html += `<option value="${item.text}" ${isSelected}>${item.text}</option>`;
+            });
+            $(element).html(html);
+        }
+
+        function pushMataKuliah(url, element) {
             $.ajax({
-                url: `/dosen/get-nilai-cpl-user`,
-                method: 'GET',
-                data: data,
-                beforeSend: function() {
-                    $('.loading').show(); // Tampilkan elemen loading sebelum request dimulai
+                url: url,
+                method: "GET",
+                success: function(res) {
+                    $(element).empty();
+                    let html = "<option></option>";
+                    $.each(res.data, function(index, item) {
+                        const isSelected = item.uuid === @json($mata_kuliah->uuid) ? 'selected' : '';
+                        html +=
+                            `<option value="${item.uuid}" ${isSelected}>${item.mata_kuliah}</option>`;
+                    });
+                    $(element).html(html);
                 },
-                success: function(response) {
-                    if (response.data && Object.keys(response.data).length > 0) {
-                        // Jika data ada dan tidak kosong, panggil fungsi untuk menampilkan grafik
-                        getGrafik(response.data);
-                    } else {
-                        // Jika data kosong, panggil fungsi untuk membersihkan grafik
-                        clearGrafik();
+                error: function(xhr) {
+                    alert("Gagal memuat data mata kuliah");
+                },
+            });
+        }
+
+        $(document).ready(function() {
+            // Ambil nilai dari select mata kuliah dan tahun ajaran saat halaman dimuat
+            const matkul = @json($mata_kuliah->uuid);
+            const tahun_ajaran = $('#from_select_tahun_ajaran').val();
+
+            // Jika sudah ada mata kuliah dan tahun ajaran yang terpilih, langsung muat data grafik
+            if (matkul && tahun_ajaran) {
+                loadGrafik(matkul, tahun_ajaran);
+            }
+
+            // Fungsi untuk memuat data grafik
+            function loadGrafik(matkul, tahun_ajaran) {
+                const data = {
+                    'matkul': matkul,
+                    'tahun_ajaran': tahun_ajaran
+                };
+
+                $.ajax({
+                    url: `/dosen/get-nilai-cpl-user`,
+                    method: 'GET',
+                    data: data,
+                    beforeSend: function() {
+                        $('.loading').show(); // Tampilkan elemen loading sebelum request dimulai
+                    },
+                    success: function(response) {
+                        if (response.data && Object.keys(response.data).length > 0) {
+                            // Jika data ada dan tidak kosong, panggil fungsi untuk menampilkan grafik
+                            getGrafik(response.data);
+                        } else {
+                            // Jika data kosong, panggil fungsi untuk membersihkan grafik
+                            clearGrafik();
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error); // Menangani error saat request gagal
+                    },
+                    complete: function() {
+                        $('.loading').hide(); // Sembunyikan elemen loading setelah permintaan selesai
                     }
-                },
-                error: function(error) {
-                    console.error(error); // Menangani error saat request gagal
-                },
-                complete: function() {
-                    // Sembunyikan elemen loading setelah permintaan AJAX selesai
-                    $('.loading').hide();
+                });
+            }
+
+            // Attach event listener to "Cari Data" button
+            $('#button-cari').on('click', function(e) {
+                e.preventDefault(); // Prevent form from submitting
+                const matkul = $('#from_select_matkul').val();
+                const tahun_ajaran = $('#from_select_tahun_ajaran').val();
+
+                if (matkul && tahun_ajaran) {
+                    loadGrafik(matkul, tahun_ajaran);
                 }
             });
         });
+
 
         function getGrafik(data) {
             $('#onData').removeClass('d-none');
@@ -116,32 +203,29 @@
             var nilaiData = [];
             var targetData = [];
 
-            // Mengiterasi objek data
             for (const [key, value] of Object.entries(data)) {
                 labels.push(key);
                 nilaiData.push(value);
                 targetData.push(70); // Nilai target tetap 70 untuk setiap label
             }
 
-            // Chart data
             const chartData = {
                 labels: labels,
                 datasets: [{
                         label: 'Target CPL',
-                        backgroundColor: 'rgba(255, 0, 0, 0.7)', // Warna merah dengan transparansi
-                        borderColor: 'rgba(255, 0, 0, 1)', // Warna merah tanpa transparansi
-                        data: targetData, // Target tetap 70
+                        backgroundColor: 'rgba(255, 0, 0, 0.7)',
+                        borderColor: 'rgba(255, 0, 0, 1)',
+                        data: targetData,
                     },
                     {
                         label: 'Nilai CPL',
-                        backgroundColor: 'rgba(0, 255, 0, 0.7)', // Warna hijau dengan transparansi
-                        borderColor: 'rgba(0, 255, 0, 1)', // Warna hijau tanpa transparansi
-                        data: nilaiData, // Nilai CPL yang diambil dari data
+                        backgroundColor: 'rgba(0, 255, 0, 0.7)',
+                        borderColor: 'rgba(0, 255, 0, 1)',
+                        data: nilaiData,
                     }
                 ]
             };
 
-            // Chart config
             const config = {
                 type: 'bar',
                 data: chartData,
@@ -169,12 +253,10 @@
                 }
             };
 
-            // Destroy existing chart if it exists
             if (window.myChart) {
                 window.myChart.destroy();
             }
 
-            // Create new ChartJS instance
             window.myChart = new Chart(ctx, config);
         }
 

@@ -30,6 +30,22 @@
         <div id="kt_content_container" class="container">
             <div class="row">
 
+                <div class="rounded bg-white p-5 mb-2">
+                    <form class="row w-100 d-flex align-items-center">
+                        <div class="col-md-10 d-flex gap-4">
+                            <select name="tahun_ajaran" class="form-select" data-control="select2"
+                                id="from_select_tahun_ajaran" data-placeholder="Pilih Tahun Ajaran">
+                            </select>
+                            <select name="uuid_matkul" class="form-select" data-control="select2" id="from_select_matkul"
+                                data-placeholder="Pilih Mata Kuliah">
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex justify-content-center align-items-end">
+                            <button class="btn btn-primary btn-sm " id="button-cari"></i>Cari Data</button>
+                        </div>
+                    </form>
+                </div>
+
                 <div class="card">
                     <div class="card-body p-0">
                         <div class="container">
@@ -70,40 +86,118 @@
             }
         });
 
+        const generateSchoolYears = (startYear) => {
+            const currentYear = new Date().getFullYear();
+            const years = [];
+
+            for (let year = startYear; year <= currentYear; year++) {
+                years.push({
+                    text: `${year}/${year + 1}`
+                });
+            }
+
+            // Membalik urutan tahun agar tahun sekarang berada di paling atas
+            return years.reverse();
+        };
+
+        const data = generateSchoolYears(2000);
+
+        $(function() {
+            pushSelectTahunAjaran(data, '#from_select_tahun_ajaran');
+            pushMataKuliah('/dosen/get-matkul-by-user', '#from_select_matkul');
+        });
+
+        function pushSelectTahunAjaran(data, element) {
+            $(element).empty();
+            let html = "<option></option>";
+            $.each(data, function(index, item) {
+                const isSelected = item.text === @json(request('tahun_ajaran')) ? 'selected' : '';
+                html += `<option value="${item.text}" ${isSelected}>${item.text}</option>`;
+            });
+            $(element).html(html);
+        }
+
+        function pushMataKuliah(url, element) {
+            $.ajax({
+                url: url,
+                method: "GET",
+                success: function(res) {
+                    $(element).empty();
+                    let html = "<option></option>";
+                    $.each(res.data, function(index, item) {
+                        const isSelected = item.uuid === @json(request('uuid_matkul')) ? 'selected' : '';
+                        html +=
+                            `<option value="${item.uuid}" ${isSelected}>${item.mata_kuliah}</option>`;
+                    });
+                    $(element).html(html);
+                },
+                error: function(xhr) {
+                    alert("Gagal memuat data mata kuliah");
+                },
+            });
+        }
+
         $(document).ready(function() {
 
+            // Ambil nilai dari request jika ada
             const matkul = @json(request('uuid_matkul'));
             const tahun_ajaran = @json(request('tahun_ajaran'));
 
-            const data = {
-                'matkul': matkul,
-                'tahun_ajaran': tahun_ajaran
-            };
+            // Fungsi untuk melakukan AJAX request dan memuat data ke DataTable
+            function loadData(matkul, tahun_ajaran) {
+                const data = {
+                    'matkul': matkul,
+                    'tahun_ajaran': tahun_ajaran
+                };
 
-            extract(data);
+                $.ajax({
+                    url: `/dosen/get-nilaicpl`,
+                    method: 'GET',
+                    data: data,
+                    success: function(res) {
+                        if (res.data && res.data.kode_cpl) {
+                            let kodeCpl = res.data.kode_cpl.map(item => item);
+                            let kodeCplHead = kodeCpl.map(cpl =>
+                                `<th>${cpl}</th>`).join('');
 
-            $.ajax({
-                url: `/dosen/get-nilaicpl`,
-                method: 'GET',
-                data: data,
-                success: function(res) {
-                    let kodeCpl = res.data.kode_cpl.map(item => item);
-                    let kodeCplHead = kodeCpl.map(cpl =>
-                        `<th>${cpl}</th>`).join('');
+                            let combinedData = combineDataByUuid(res.data.data);
+                            let label_head = ['nama_mahasiswa', ...kodeCpl];
 
-                    let combinedData = combineDataByUuid(res.data.data);
-                    let label_head = ['nama_mahasiswa', ...kodeCpl];
+                            // Hapus DataTable sebelumnya (jika ada) sebelum menginisialisasi yang baru
+                            if ($.fn.DataTable.isDataTable('#kt_table_data')) {
+                                $('#kt_table_data').DataTable().clear().destroy();
+                            }
 
-                    // Hapus DataTable sebelumnya (jika ada) sebelum menginisialisasi yang baru
-                    if ($.fn.DataTable.isDataTable('#kt_table_data')) {
-                        $('#kt_table_data').DataTable().clear().destroy();
+                            // Inisialisasi ulang DataTable dengan data yang diperbarui
+                            initDatatable(combinedData, kodeCplHead, label_head);
+                        } else {
+                            console.error('Data CPL tidak tersedia.');
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
                     }
+                });
+            }
 
-                    // Inisialisasi ulang DataTable dengan data yang diperbarui
-                    initDatatable(combinedData, kodeCplHead, label_head);
-                },
-                error: function(error) {
-                    console.error(error);
+            // Jika ada request dari URL, langsung panggil fungsi loadData
+            if (matkul && tahun_ajaran) {
+                loadData(matkul, tahun_ajaran);
+            }
+
+            // Event listener untuk tombol "Cari Data"
+            $('#button-cari').on('click', function(e) {
+                e.preventDefault(); // Prevent form submission
+
+                // Ambil nilai baru dari form
+                const matkul = $('#from_select_matkul').val();
+                const tahun_ajaran = $('#from_select_tahun_ajaran').val();
+
+                // Validasi input sebelum mencari ulang data
+                if (matkul && tahun_ajaran) {
+                    loadData(matkul, tahun_ajaran);
+                } else {
+                    alert('Mata kuliah dan tahun ajaran harus dipilih.');
                 }
             });
         });

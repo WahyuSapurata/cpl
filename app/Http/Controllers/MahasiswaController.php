@@ -48,12 +48,12 @@ class MahasiswaController extends BaseController
         return $this->sendResponse($data, 'Show data success');
     }
 
-    public function update(StoreMahasiswaRequest $storeMahasiswaRequest, $params)
+    public function update(UpdateMahasiswaRequest $updateMahasiswaRequest, $params)
     {
         try {
             $data = Mahasiswa::where('uuid', $params)->first();
-            $data->nim = $storeMahasiswaRequest->nim;
-            $data->nama = $storeMahasiswaRequest->nama;
+            $data->nim = $updateMahasiswaRequest->nim;
+            $data->nama = $updateMahasiswaRequest->nama;
             $data->save();
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);

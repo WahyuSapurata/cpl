@@ -39,6 +39,19 @@
         <div id="kt_content_container" class="container">
             <div class="row">
 
+                <div class="rounded bg-white p-5 mb-2">
+                    <form class="row w-100 d-flex align-items-center">
+                        <div class="col-md-10 d-flex gap-4">
+                            <select name="matkul" class="form-select" data-control="select2" id="from_select_matkul"
+                                data-placeholder="Pilih Mata Kuliah">
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex justify-content-center align-items-end">
+                            <button class="btn btn-primary btn-sm " id="button-cari"></i>Cari Data</button>
+                        </div>
+                    </form>
+                </div>
+
                 <div class="card">
                     <div class="card-body p-0">
                         <div class="container">
@@ -183,10 +196,44 @@
 
             let selectedUuid = @json($mata_kuliah->uuid);
 
+            pushMataKuliah('/dosen/get-matkul-by-user', '#from_select_matkul');
+
+            function pushMataKuliah(url, element) {
+                $.ajax({
+                    url: url,
+                    method: "GET",
+                    success: function(res) {
+                        $(element).empty();
+                        let html = "<option></option>";
+                        $.each(res.data, function(index, item) {
+                            const isSelected = item.uuid === selectedUuid ?
+                                'selected' : '';
+                            html +=
+                                `<option value="${item.uuid}" ${isSelected}>${item.mata_kuliah}</option>`;
+                        });
+                        $(element).html(html);
+                    },
+                    error: function(xhr) {
+                        alert("Gagal memuat data mata kuliah");
+                    },
+                });
+            }
+
             $('#uuid_matkul').val(selectedUuid);
 
             initDatatable(selectedUuid);
             getCpmk(selectedUuid);
+
+            // Attach event listener to "Cari Data" button
+            $('#button-cari').on('click', function(e) {
+                e.preventDefault(); // Prevent form from submitting
+                const matkul = $('#from_select_matkul').val();
+
+                if (matkul) {
+                    initDatatable(matkul);
+                    getCpmk(matkul);
+                }
+            });
 
             $(document).on('submit', ".form-data", function(e) {
                 e.preventDefault();

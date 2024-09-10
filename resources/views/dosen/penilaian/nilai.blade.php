@@ -21,11 +21,6 @@
             <!--end::Title-->
         </div>
         <!--end::Page title-->
-        {{-- <!--begin::Actions-->
-    <div class="d-flex align-items-center gap-2 gap-lg-3">
-        <div id="alert-bobot"></div>
-    </div>
-    <!--end::Actions--> --}}
     </div>
 @endsection
 @section('content')
@@ -33,6 +28,23 @@
         <!--begin::Container-->
         <div id="kt_content_container" class="container">
             <div class="row">
+
+                <div class="rounded bg-white p-5 mb-2">
+                    <form action="{{ route('dosen.get-penilaian') }}" method="GET"
+                        class="row w-100 d-flex align-items-center">
+                        <div class="col-md-10 d-flex gap-4">
+                            <select name="tahun_ajaran" class="form-select" data-control="select2"
+                                id="from_select_tahun_ajaran" data-placeholder="Pilih Tahun Ajaran">
+                            </select>
+                            <select name="uuid_matkul" class="form-select" data-control="select2" id="from_select_matkul"
+                                data-placeholder="Pilih Mata Kuliah">
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex justify-content-center align-items-end">
+                            <button class="btn btn-primary btn-sm " id="button-cari"></i>Cari Data</button>
+                        </div>
+                    </form>
+                </div>
 
                 <form action="{{ route('dosen.update-penilaian') }}" method="post">
                     @csrf
@@ -127,9 +139,64 @@
 @section('script')
     <script>
         $(document).on('click', '#button-back', function() {
-            // Ambil UUID dari Blade template dan navigasi ke URL sebelumnya
-            const uuid = {!! json_encode($kelas[0]->uuid) !!}; // Mengonversi nilai PHP ke JavaScript
-            window.location.href = `/dosen/dashboard/${uuid}`;
+            @if (isset($kelas[0]))
+                // Ambil UUID dari Blade template dan navigasi ke URL sebelumnya
+                const uuid = {!! json_encode($kelas[0]->uuid) !!}; // Mengonversi nilai PHP ke JavaScript
+                window.location.href = `/dosen/dashboard/${uuid}`;
+            @else
+                alert('Data kelas tidak tersedia.');
+            @endif
         });
+
+        const generateSchoolYears = (startYear) => {
+            const currentYear = new Date().getFullYear();
+            const years = [];
+
+            for (let year = startYear; year <= currentYear; year++) {
+                years.push({
+                    text: `${year}/${year + 1}`
+                });
+            }
+
+            // Membalik urutan tahun agar tahun sekarang berada di paling atas
+            return years.reverse();
+        };
+
+        const data = generateSchoolYears(2000);
+
+        $(function() {
+            pushSelectTahunAjaran(data, '#from_select_tahun_ajaran');
+            pushMataKuliah('/dosen/get-matkul-by-user', '#from_select_matkul');
+        });
+
+        function pushSelectTahunAjaran(data, element) {
+            $(element).empty();
+            let html = "<option></option>";
+            $.each(data, function(index, item) {
+                const isSelected = item.text === @json(request('tahun_ajaran')) ? 'selected' : '';
+                html += `<option value="${item.text}" ${isSelected}>${item.text}</option>`;
+            });
+            $(element).html(html);
+        }
+
+        function pushMataKuliah(url, element) {
+            $.ajax({
+                url: url,
+                method: "GET",
+                success: function(res) {
+                    $(element).empty();
+                    let html = "<option></option>";
+                    $.each(res.data, function(index, item) {
+                        const isSelected = item.uuid === @json(request('uuid_matkul')) ? 'selected' : '';
+                        html +=
+                            `<option value="${item.uuid}" ${isSelected}>${item.mata_kuliah}</option>`;
+                    });
+                    $(element).html(html);
+                },
+                error: function(xhr) {
+                    alert("Gagal memuat data mata kuliah");
+                },
+            });
+        }
     </script>
 @endsection
