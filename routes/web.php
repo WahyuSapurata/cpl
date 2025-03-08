@@ -105,6 +105,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::post('/update-mahasiswa/{params}', 'MahasiswaController@update')->name('update-mahasiswa');
             Route::delete('/delete-mahasiswa/{params}', 'MahasiswaController@delete')->name('delete-mahasiswa');
 
+            Route::post('/import-mahasiswa', 'MahasiswaController@import')->name('import-mahasiswa');
+
             Route::get('/kurikulum', 'KurikulumController@index')->name('kurikulum');
             Route::get('/get-kurikulum', 'KurikulumController@get')->name('get-kurikulum');
             Route::get('/show-kurikulum/{params}', 'KurikulumController@show')->name('show-kurikulum');

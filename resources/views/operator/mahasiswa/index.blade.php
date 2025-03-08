@@ -13,14 +13,61 @@
         </div>
         <!--end::Page title-->
         <!--begin::Actions-->
-        {{-- <div class="d-flex align-items-center gap-2 gap-lg-3">
-            <a href="#" data-type="excel" class="btn btn-sm btn-success export">Export Excel</a>
-            <a href="#" data-type="pdf" class="btn btn-sm btn-danger export">Cetak Laporan</a>
-        </div> --}}
+        <div class="d-flex align-items-center gap-2 gap-lg-3">
+            <button data-bs-toggle="modal" data-bs-target="#exampleModal" type="button"
+                class="flex items-center gap-2 px-5 btn text-white btn-success btn-sm">
+                <span class="text-[10px] font-semibold">IMPORT DATA MAHASISWA</span>
+            </button>
+        </div>
         <!--end::Actions-->
     </div>
 @endsection
 @section('content')
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Import Data Excel Mahasiswa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="space-y-4 grid grid-cols-2 gap-1" action="{{ route('operator.import-mahasiswa') }}"
+                        method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="col-span-2">
+                            <div class="border-2 border-dashed border-[#096B5A] rounded-lg p-6 text-center">
+                                <iconify-icon icon="line-md:cloud-alt-upload-twotone-loop"
+                                    class="menu-icon text-5xl text-[#096B5A] mx-auto"></iconify-icon>
+                                <p class="text-[10px] text-[#096B5A] mt-4 mb-0">Berkas <span
+                                        class="font-medium">.csv</span>, <span class="font-medium">.xls</span>, <span
+                                        class="font-medium">.xlsx</span></p>
+                                <p class="text-[#096B5A] text-xs mb-0">Seret dan lepas berkas
+                                    kesini
+                                    untuk
+                                    mengunggah <br> atau</p>
+                                <div class="flex justify-center">
+                                    <label
+                                        class="flex items-center w-max mt-4 px-4 py-2 bg-teal-100 text-teal-700 border rounded-md cursor-pointer hover:bg-teal-200">
+                                        <input type="file" name="file" class="hidden" accept=".csv, .xls, .xlsx">
+                                        <iconify-icon icon="line-md:upload-loop" class="mr-2"></iconify-icon>
+                                        <span>BROWSE FILE</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-span-2 flex justify-end">
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="post d-flex flex-column-fluid" id="kt_post">
         <!--begin::Container-->
         <div id="kt_content_container" class="container">
@@ -248,4 +295,28 @@
             initDatatable();
         });
     </script>
+
+    @if ($message = Session::get('failed'))
+        <script>
+            swal.fire({
+                title: "Eror",
+                text: "{{ $message }}",
+                icon: "warning",
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        </script>
+    @endif
+
+    @if ($message = Session::get('success'))
+        <script>
+            swal.fire({
+                title: "Sukses",
+                text: "{{ $message }}",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        </script>
+    @endif
 @endsection
